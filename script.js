@@ -10,39 +10,46 @@ document.addEventListener('DOMContentLoaded', function () {
   const dateInput = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
   const qrPayBtn = document.getElementById('qrPayBtn');
-  const subtitle = document.querySelector('.subtitle'); // For hiding/showing subtitle
+  const subtitle = document.querySelector('.subtitle');
 
-  // संयोजकांची यादी लोड करणे
+  // संयोजकांची यादी लोड करणे (Google Sheet कॉलम क्रम: Sr. No., गाव, संयोजकाचे नाव, मोबाईल नंबर, इतर माहिती)
   const SHEET_URL = 'https://opensheet.elk.sh/1W059r6QUWecU8WY5OdLLybCMkPOPr_K5IXXEETUbrn4/Conveners';
   fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
-      const HONORIFICS_REGEX = /^(श्री\.?\s*|श्रीमती\.?\s*|डॉ\.?\s*|डॉ\s*|Dr\.?\s*|Dr\s*|Mr\.?\s*|Mrs\.?\s*)/i;
+      // Sr. No. = row['Sr. No.'] किंवा row[0], गाव=row['गाव'] किंवा row[1], संयोजकाचे नाव=row['संयोजकाचे नाव'] किंवा row[2], मोबाईल=row['मोबाईल नंबर'] किंवा row[3]
       const items = data.map(row => {
-        const rawName = (row.name || row[0] || '').toString().trim();
-        const mobile = (row.mobile || row[1] || '').toString().trim();
-        const sortKey = rawName.replace(HONORIFICS_REGEX, '').trim();
-        return { displayName: rawName, sortKey, mobile };
+        const village = (row['गाव'] || row[1] || '').toString().trim();
+        const name = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
+        const mobile = (row['मोबाईल नंबर'] || row[3] || '').toString().trim();
+        // Option: गाव + नाव (मोबाईल)
+        return {
+          displayName: village ? `${village} : ${name}` : name,
+          sortKey: name,
+          mobile
+        };
       }).filter(it => it.displayName);
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       items.sort((a, b) => collator.compare(a.sortKey, b.sortKey));
-      referenceSelect.innerHTML = '<option value="">-- संयोजक निवडा --</option>';
+      referenceSelect.innerHTML = '<option value="" style="text-align:center">-- संयोजक निवडा --</option>';
       items.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.displayName;
-        opt.textContent = item.displayName;
+        opt.textContent = item.displayName + (item.mobile ? ` (${item.mobile})` : '');
         opt.setAttribute('data-mobile', item.mobile);
+        opt.style.textAlign = 'center';
         referenceSelect.appendChild(opt);
       });
       // शेवटी 'यापैकी कोणीही नाही अन्य मार्ग'
       const otherOpt = document.createElement('option');
       otherOpt.value = 'यापैकी कोणीही नाही अन्य मार्ग';
       otherOpt.textContent = 'यापैकी कोणीही नाही अन्य मार्ग';
+      otherOpt.style.textAlign = 'center';
       referenceSelect.appendChild(otherOpt);
     })
     .catch(err => console.error('संयोजक लोड करताना त्रुटी:', err));
 
-  // तारीख व वेळेचा स्लॉट निवडणे (15 सप्टेंबर ते 15 ऑक्टोबर 2025 लॉजिक)
+  // तारीख व वेळेचा स्लॉट निवडणे
   const SLOTS = [
     { label: "08:00 AM - 10:00 AM", start: "08:00" },
     { label: "10:00 AM - 12:00 PM", start: "10:00" },
@@ -57,14 +64,14 @@ document.addEventListener('DOMContentLoaded', function () {
   dateInput.setAttribute('max', maxDate);
 
   dateInput.addEventListener('change', function () {
-    timeslotSelect.innerHTML = '<option value="">-- वेळ निवडा --</option>';
+    timeslotSelect.innerHTML = '<option value="" style="text-align:center">-- वेळ निवडा --</option>';
     if (!this.value) {
       timeslotSelect.disabled = true;
       return;
     }
     if (this.value < minDate || this.value > maxDate) {
       timeslotSelect.disabled = true;
-      timeslotSelect.innerHTML = '<option value="">तारीख योग्य नाही</option>';
+      timeslotSelect.innerHTML = '<option value="" style="text-align:center">तारीख योग्य नाही</option>';
       return;
     }
     timeslotSelect.disabled = false;
@@ -72,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const opt = document.createElement('option');
       opt.value = slot.start;
       opt.textContent = slot.label;
+      opt.style.textAlign = 'center';
       timeslotSelect.appendChild(opt);
     });
   });
@@ -112,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => {
       data[key] = value;
     });
-
     // तारीख व वेळेचा स्लॉट पाठवा
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
@@ -130,7 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
-          // सबटायटल लपवा
           if (subtitle) subtitle.style.display = 'none';
         } else {
           throw new Error('सबमिशन अयशस्वी');
@@ -149,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
     form.reset();
     errorMsg.style.display = 'none';
     successMsg.style.display = 'none';
-    // सबटायटल पुन्हा दाखवा
     if (subtitle) subtitle.style.display = '';
   });
 
