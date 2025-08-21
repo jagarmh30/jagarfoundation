@@ -44,10 +44,9 @@
         min-height: 0;
       }
     }
-
     .subtitle {
       margin-top: 8px;
-      margin-bottom: 2px; /* गॅप कमी केला */
+      margin-bottom: 0px;
       font-size: 1rem;
       text-align: center;
       color: #000;
@@ -55,8 +54,8 @@
     }
     form {
       max-width: 410px;
-      margin: 24px auto 0 auto;
-      padding: 5px 24px 20px 24px; /* वरचा padding कमी केला */
+      margin: 10px auto 0 auto;
+      padding: 10px 24px 20px 24px;
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 3px 16px rgba(0,0,60,0.10);
@@ -214,7 +213,6 @@
       box-shadow: none;
     }
 
-    /* तारीख व वेळ - एका ओळीत, लेफ्ट अलाइन, mobile वर सुद्धा */
     .date-row-group {
       margin-bottom: 7px;
     }
@@ -252,13 +250,16 @@
       max-width: 50%;
     }
     .date-row-fields input[type="date"] {
-      max-width: 120px; /* तारीख फील्ड लहान केला */
-      padding: 7px 4px; /* padding कमी केला */
+      max-width: 90px;
+      padding: 6px 2px;
     }
     .date-row-fields select {
-      min-width: 0;
+      max-width: 180px;
+      text-align: center;
     }
-
+    select {
+      text-align: center;
+    }
     @media (max-width:600px) {
       .date-row-fields {
         flex-direction: row;
@@ -269,7 +270,7 @@
         max-width: 50%;
       }
       .date-row-fields input[type="date"] {
-        max-width: 120px;
+        max-width: 90px;
       }
     }
     @media (max-width:400px) {
@@ -361,28 +362,6 @@
   <footer>
     © जागर फाउंडेशन | सामाजिक दिवाळी 2025
   </footer>
-  <script>
-    // लोकेशन आयकॉनद्वारे लोकेशन मिळवा
-    document.getElementById('locBtn').addEventListener('click', function(e) {
-      e.preventDefault();
-      const locationInput = document.getElementById('location');
-      locationInput.value = 'मिळवत आहे...';
-      if (!navigator.geolocation) {
-        locationInput.value = 'लोकेशन मिळाले नाही';
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const { latitude, longitude } = pos.coords;
-          locationInput.value = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-        },
-        err => {
-          locationInput.value = 'लोकेशन मिळाले नाही';
-        }
-      );
-    });
-  </script>
   <script src="script.js"></script>
 </body>
 </html>
-
