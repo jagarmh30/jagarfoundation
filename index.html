@@ -47,7 +47,7 @@
 
     .subtitle {
       margin-top: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 2px; /* गॅप कमी केला */
       font-size: 1rem;
       text-align: center;
       color: #000;
@@ -56,7 +56,7 @@
     form {
       max-width: 410px;
       margin: 24px auto 0 auto;
-      padding: 28px 24px 20px 24px;
+      padding: 10px 24px 20px 24px; /* वरचा padding कमी केला */
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 3px 16px rgba(0,0,60,0.10);
@@ -251,8 +251,11 @@
       text-align: left;
       max-width: 50%;
     }
-    .date-row-fields input[type="date"], .date-row-fields select {
-      width: 100%;
+    .date-row-fields input[type="date"] {
+      max-width: 120px; /* तारीख फील्ड लहान केला */
+      padding: 7px 4px; /* padding कमी केला */
+    }
+    .date-row-fields select {
       min-width: 0;
     }
 
@@ -264,6 +267,9 @@
       }
       .date-row-fields > div {
         max-width: 50%;
+      }
+      .date-row-fields input[type="date"] {
+        max-width: 120px;
       }
     }
     @media (max-width:400px) {
