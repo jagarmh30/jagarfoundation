@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
-    // Google Apps Script वेब अ‍ॅप URL - **इथे तुमचा नवीन आयडी वापरा**
+    // Google Apps Script वेब अ‍ॅप URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9qFvcGDH90rz91bgHZoR8JjDPISM2_IsCHqC4_m1UqY4AF2O58uN1gRgT6lcsjO7jLw/exec';
     const bodyData = new URLSearchParams(data).toString();
     fetch(SCRIPT_URL, {
