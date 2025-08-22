@@ -13,37 +13,35 @@ document.addEventListener('DOMContentLoaded', function () {
   const subtitle = document.querySelector('.subtitle');
 
   // संयोजकांची यादी लोड करणे
-  const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners';
+  const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
 
   fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
+      // कॉलम C मधील नावे घ्या
       const items = data.map(row => {
-        const village = (row['गाव'] || row[1] || '').toString().trim();
-        const name = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
-        const mobile = (row['मोबाईल नंबर'] || row[3] || '').toString().trim();
+        const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
+        // क्रमवारीसाठी उपाधी काढून टाकणे
+        const sortKey = fullName.replace(/^(श्री\.?|श्रीमती\.?|कु\.?|डॉ\.?)\s*/i, '').trim();
         return {
-          displayName: village ? `${village} : ${name}` : name,
-          sortKey: name,
-          mobile
+          displayName: fullName, // ड्रॉपडाउनमध्ये पूर्ण नाव (उपाधीसह)
+          sortKey: sortKey // क्रमवारीसाठी उपाधीशिवाय नाव
         };
-      }).filter(it => it.displayName);
+      }).filter(it => it.displayName); // रिक्त नावे वगळा
+
+      // मराठी क्रमवारीनुसार यादी क्रमवारी लावा
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       items.sort((a, b) => collator.compare(a.sortKey, b.sortKey));
+
+      // ड्रॉपडाउन यादी तयार करा
       referenceSelect.innerHTML = '<option value="" style="text-align:center">-- संयोजक निवडा --</option>';
       items.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.displayName;
-        opt.textContent = item.displayName + (item.mobile ? ` (${item.mobile})` : '');
-        opt.setAttribute('data-mobile', item.mobile);
+        opt.textContent = item.displayName;
         opt.style.textAlign = 'center';
         referenceSelect.appendChild(opt);
       });
-      const otherOpt = document.createElement('option');
-      otherOpt.value = 'यापैकी कोणीही नाही अन्य मार्ग';
-      otherOpt.textContent = 'यापैकी कोणीही नाही अन्य मार्ग';
-      otherOpt.style.textAlign = 'center';
-      referenceSelect.appendChild(otherOpt);
     })
     .catch(err => console.error('संयोजक लोड करताना त्रुटी:', err));
 
@@ -120,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
-    // ✅ तुझा Web App URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
     const bodyData = new URLSearchParams(data).toString();
 
