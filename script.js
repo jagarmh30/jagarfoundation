@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
   function loadTotalsData() {
     const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
-    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + FUNDS.now();
+    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
 
     // रद्दी डेटा लोड करणे
     fetch(DONORS_SHEET_URL)
