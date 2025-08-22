@@ -310,16 +310,15 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
-  // टाइपिंग इफेक्ट फंक्शन (राईट-टू-लेफ्ट)
+  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
   function typeWriterEffect(element, text, callback) {
     element.textContent = '';
     element.style.textAlign = 'justify';
-    const reversedText = text.split('').reverse().join('');
     let index = 0;
     const speed = 50; // मिलिसेकंदमध्ये स्पीड
     function type() {
-      if (index < reversedText.length) {
-        element.textContent = reversedText.slice(0, index + 1).split('').reverse().join('');
+      if (index < text.length) {
+        element.textContent += text.charAt(index);
         index++;
         setTimeout(type, speed);
       } else if (callback) {
@@ -344,10 +343,26 @@ style.textContent = `
     padding: 10px;
     margin: 10px 0;
     display: none;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #totalWaste, #totalFunds {
+    border: 1px solid #ccc;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 3px;
   }
   #thankyouExitBtn {
     display: none;
     margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
   }
   #thankyouMessage {
     text-align: justify;
