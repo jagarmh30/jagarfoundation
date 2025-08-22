@@ -19,12 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // इमेजेसवर उजव्या क्लिक आणि ड्रॅग अक्षम करणे
   const images = document.querySelectorAll('img');
   images.forEach(img => {
-    img.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-    });
-    img.addEventListener('dragstart', (e) => {
-      e.preventDefault();
-    });
+    img.addEventListener('contextmenu', (e) => e.preventDefault());
+    img.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
   // संयोजकांची यादी लोड करणे
@@ -37,18 +33,12 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(data => {
       console.log('संयोजक डेटा:', data);
-
       const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग';
       const items = data.map(row => {
         const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
         const sortKey = fullName.replace(/^(श्री\.?|श्रीमती\.?|कु\.?|डॉ\.?)\s*/i, '').trim();
-        return {
-          displayName: fullName,
-          sortKey: sortKey,
-          isLastOption: fullName === lastOption
-        };
+        return { displayName: fullName, sortKey, isLastOption: fullName === lastOption };
       }).filter(it => it.displayName);
-
       console.log('प्रोसेस्ड संयोजक नावे:', items);
 
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
@@ -167,10 +157,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // डेटा साफ करणे (टेक्स्ट स्वरूप हाताळण्यासाठी)
+  // डेटा साफ करणे
   function cleanNumericData(value) {
     if (!value) return 0;
-    // टेक्स्टमधून अक्षरे काढा (उदा. "5.5 kg" -> "5.5", "10000 रु." -> "10000", "₹10000" -> "10000", "10000/-" -> "10000")
     const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
     const numericValue = parseFloat(cleanedValue);
     return isNaN(numericValue) ? 0 : numericValue;
@@ -189,17 +178,13 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .then(data => {
         console.log('कच्चा रद्दी डेटा (Donors शीट):', data);
-
-        // रद्दीची बेरीज
         const wasteValues = data.map(row => ({
           waste: cleanNumericData(row.Quantity),
           raw: row.Quantity
         }));
         console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
-
         const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0);
         console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
-
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
 
         // निधी डेटा लोड करणे
@@ -212,17 +197,13 @@ document.addEventListener('DOMContentLoaded', function () {
           })
           .then(funds => {
             console.log('कच्चा निधी डेटा (2025 शीट):', funds);
-
-            // निधीची बेरीज
             const fundValues = funds.map(row => ({
               fund: cleanNumericData(row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 0),
               raw: row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 'N/A'
             }));
             console.log('निधी मूल्ये (साफ केलेले):', fundValues);
-
             const totalFundsAmount = fundValues.reduce((sum, item) => sum + item.fund, 0);
             console.log('एकूण निधी:', totalFundsAmount);
-
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
             if (totalFundsAmount === 0) {
               console.warn('निधी डेटा रिक्त किंवा अवैध आहे');
@@ -232,8 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
               errorMsg.style.display = 'none';
             }
-
-            // डिस्प्ले दाखवा
             totalsDisplay.style.display = 'block';
           })
           .catch(err => {
@@ -273,9 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const formData = new FormData(form);
     const data = {};
-    formData.forEach((value, key) => {
-      data[key] = value;
-    });
+    formData.forEach((value, key) => { data[key] = value; });
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
