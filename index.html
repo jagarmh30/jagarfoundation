@@ -10,6 +10,7 @@
       background: #fff;
       margin: 0;
       padding: 0;
+      user-select: none; /* टेक्स्ट सिलेक्ट रोखणे */
     }
     header {
       margin: 0;
@@ -28,6 +29,7 @@
       display: block;
       margin: 0 auto;
       padding: 16px 0 14px 0;
+      pointer-events: none; /* क्लिक अक्षम */
     }
     @media (max-width: 1000px) {
       .header-img {
@@ -50,6 +52,14 @@
       font-size: 1rem;
       text-align: center;
       color: #000;
+      font-weight: 500;
+    }
+    .disclaimer {
+      color: #b40000;
+      font-size: 0.9rem;
+      text-align: center;
+      margin: 8px auto;
+      max-width: 400px;
       font-weight: 500;
     }
     form {
@@ -183,6 +193,7 @@
       box-shadow: 0 2px 8px rgba(0,0,60,0.11);
       background: #15626a;
       display: inline-block;
+      pointer-events: none; /* क्लिक अक्षम */
     }
     .qr-section img:hover {
       box-shadow: 0 4px 16px #15626a;
@@ -234,6 +245,7 @@
       background: none;
       border: none;
       box-shadow: none;
+      pointer-events: none; /* क्लिक अक्षम */
     }
     .date-row-group {
       margin-bottom: 7px;
@@ -344,10 +356,13 @@
 </head>
 <body>
   <header>
-    <img class="header-img" src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/header.png" alt="Header Banner">
+    <img class="header-img" src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/header.png" alt="Header Banner" draggable="false">
   </header>
   <div class="subtitle">
     उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.
+  </div>
+  <div class="disclaimer">
+    इमेजेस डाउनलोड करणे किंवा स्क्रीनशॉट घेणे निषिद्ध आहे.
   </div>
   <div class="success" id="success">फॉर्म सबमिट झाला. धन्यवाद!</div>
   <form id="main-form" autocomplete="off">
@@ -361,7 +376,7 @@
     <label for="location">शक्य असल्यास लोकेशन शेअर करा:</label>
     <div class="location-row">
       <button type="button" id="locBtn" class="location-icon-btn" title="लोकेशन मिळवा" aria-label="लोकेशन मिळवा">
-        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन">
+        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन" draggable="false">
       </button>
       <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" autocomplete="off" readonly>
     </div>
@@ -392,7 +407,7 @@
     <div class="qr-section">
       <span class="qr-label">आर्थिक मदत करावयाची असल्यास:</span>
       <button type="button" id="qrPayBtn">
-        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/rupee%20icon.jpg" alt="R Logo" id="qrImage">
+        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/rupee%20icon.jpg" alt="R Logo" id="qrImage" draggable="false">
       </button>
     </div>
     <div class="actions">
