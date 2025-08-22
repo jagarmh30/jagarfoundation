@@ -69,7 +69,7 @@
       letter-spacing: 0.2px;
       color: #000000;
     }
-    input[type="text"], input[type="tel"], textarea, select, input[type="date"] {
+    input[type="text"], input[type="tel"], input[type="number"], textarea, select, input[type="date"] {
       width: 100%;
       font-size: 1rem;
       padding: 7px 8px;
@@ -85,6 +85,14 @@
       border-color: #19aab8;
       outline: none;
       background: #e3fafc;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none; /* क्रोममध्ये स्पिनर काढले */
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield; /* फायरफॉक्ससाठी */
     }
     textarea {
       min-height: 56px;
@@ -189,7 +197,7 @@
     .location-row {
       display: flex;
       gap: 6px;
-      align-items: stretch;
+      align-items: center;
       margin-bottom: 7px;
     }
     .location-row input {
@@ -218,6 +226,18 @@
       border: none;
       box-shadow: none;
     }
+    #location-loading {
+      display: none;
+      color: #15626a;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
     .date-row-group {
       margin-bottom: 7px;
     }
@@ -244,7 +264,7 @@
       gap: 8px;
       align-items: center;
       margin-bottom: 0;
-      justify-content: flex-start;
+      justify-content: space-between; /* तारीख आणि वेळ जस्टीफाइड अलाइनमेंट */
       text-align: left;
       width: 100%;
     }
@@ -252,33 +272,38 @@
       flex: 1 1 0;
       min-width: 0;
       text-align: left;
-      max-width: 50%;
+      max-width: 48%; /* प्रत्येक फिल्डला समान रुंदी */
     }
     .date-row-fields input[type="date"] {
-      max-width: 90px;
+      max-width: 100%;
       padding: 6px 2px;
     }
     .date-row-fields select {
-      max-width: 180px;
+      max-width: 100%;
       text-align: left; /* वेळ स्लॉट लेफ्ट अलाइन्ड */
     }
-    @media (max-width:600px) {
+    @media (max-width: 600px) {
       .date-row-fields {
         flex-direction: row;
         gap: 8px;
         align-items: center;
+        justify-content: space-between;
       }
       .date-row-fields > div {
-        max-width: 50%;
+        max-width: 48%;
       }
       .date-row-fields input[type="date"] {
-        max-width: 90px;
+        max-width: 100%;
+      }
+      .date-row-fields select {
+        max-width: 100%;
       }
     }
-    @media (max-width:400px) {
+    @media (max-width: 400px) {
       .date-row-fields {
         flex-direction: column;
         gap: 0;
+        justify-content: flex-start;
       }
       .date-row-fields > div {
         max-width: 100%;
@@ -320,13 +345,14 @@
         <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन">
       </button>
       <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" autocomplete="off" readonly>
+      <span id="location-loading">लोकेशन घेत आहे...</span>
     </div>
 
     <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
     <input type="tel" id="mobile" name="mobile" required pattern="^[0-9]{10}$" maxlength="10" autocomplete="off">
 
     <label for="waste">उपक्रमासाठी उपलब्ध रद्दी (अंदाज किती किलो):</label>
-    <input type="text" id="waste" name="waste" required autocomplete="off">
+    <input type="number" id="waste" name="waste" required min="0" step="0.1" autocomplete="off">
 
     <div class="date-row-group">
       <div class="date-row-label">
