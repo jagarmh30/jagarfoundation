@@ -279,7 +279,11 @@ document.addEventListener('DOMContentLoaded', function () {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
-          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => loadTotalsData());
+          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => {
+            totalsDisplay.style.display = 'block';
+            thankyouExitBtn.style.display = 'block';
+            loadTotalsData();
+          });
         } else {
           throw new Error('सबमिशन अयशस्वी');
         }
@@ -299,20 +303,23 @@ document.addEventListener('DOMContentLoaded', function () {
     errorMsg.style.display = 'none';
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
+    thankyouExitBtn.style.display = 'none';
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
-  // टाइपिंग इफेक्ट फंक्शन
+  // टाइपिंग इफेक्ट फंक्शन (राईट-टू-लेफ्ट)
   function typeWriterEffect(element, text, callback) {
     element.textContent = '';
+    element.style.textAlign = 'justify';
+    const reversedText = text.split('').reverse().join('');
     let index = 0;
-    const speed = 50; // मिलिसेकondमध्ये स्पीड (लहान संख्या = जास्त वेग)
+    const speed = 50; // मिलिसेकंदमध्ये स्पीड
     function type() {
-      if (index < text.length) {
-        element.textContent += text.charAt(index);
+      if (index < reversedText.length) {
+        element.textContent = reversedText.slice(0, index + 1).split('').reverse().join('');
         index++;
         setTimeout(type, speed);
       } else if (callback) {
@@ -323,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// CSS स्टाइल्स (इनलाइन किंवा सेपरेट CSS फाइलमध्ये जोडा)
+// CSS स्टाइल्स
 const style = document.createElement('style');
 style.textContent = `
   .location-loading-placeholder::placeholder {
@@ -331,6 +338,19 @@ style.textContent = `
   }
   @keyframes blink {
     50% { opacity: 0; }
+  }
+  #totalsDisplay {
+    border: 2px solid #000;
+    padding: 10px;
+    margin: 10px 0;
+    display: none;
+  }
+  #thankyouExitBtn {
+    display: none;
+    margin-top: 10px;
+  }
+  #thankyouMessage {
+    text-align: justify;
   }
 `;
 document.head.appendChild(style);
