@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
   function loadTotalsData() {
     const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
-    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
+    const 2025_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
 
     // रद्दी डेटा लोड करणे
     fetch(DONORS_SHEET_URL)
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
-          loadTotalsData();
+          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => loadTotalsData());
         } else {
           throw new Error('सबमिशन अयशस्वी');
         }
@@ -304,4 +304,33 @@ document.addEventListener('DOMContentLoaded', function () {
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
+
+  // टाइपिंग इफेक्ट फंक्शन
+  function typeWriterEffect(element, text, callback) {
+    element.textContent = '';
+    let index = 0;
+    const speed = 50; // मिलिसेकondमध्ये स्पीड (लहान संख्या = जास्त वेग)
+    function type() {
+      if (index < text.length) {
+        element.textContent += text.charAt(index);
+        index++;
+        setTimeout(type, speed);
+      } else if (callback) {
+        callback();
+      }
+    }
+    type();
+  }
 });
+
+// CSS स्टाइल्स (इनलाइन किंवा सेपरेट CSS फाइलमध्ये जोडा)
+const style = document.createElement('style');
+style.textContent = `
+  .location-loading-placeholder::placeholder {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
