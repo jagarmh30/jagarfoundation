@@ -5,11 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const thankyouMessage = document.getElementById('thankyouMessage');
   const locBtn = document.getElementById('locBtn');
   const locationField = document.getElementById('location');
+  const locationLoading = document.getElementById('location-loading');
   const referenceSelect = document.getElementById('reference');
   const timeslotSelect = document.getElementById('timeslot');
   const dateInput = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
   const qrPayBtn = document.getElementById('qrPayBtn');
+  const wasteInput = document.getElementById('waste');
   const subtitle = document.querySelector('.subtitle');
 
   // संयोजकांची यादी लोड करणे
@@ -127,19 +129,36 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // वेस्ट इनपुट व्हॅलिडेशन (केवळ आकडे)
+  wasteInput.addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9.]/g, ''); // फक्त आकडे आणि दशांश बिंदू स्वीकारा
+    if (this.value.includes('.')) {
+      const parts = this.value.split('.');
+      if (parts.length > 2) this.value = parts[0] + '.' + parts[1]; // एकच दशांश बिंदू
+      if (parts[1]?.length > 2) this.value = parts[0] + '.' + parts[1].slice(0, 2); // दशांशानंतर फक्त 2 अंक
+    }
+  });
+
   // लोकेशन मिळवणे
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
+      locationLoading.style.display = 'inline'; // ब्लिंकिंग सूचना दाखवा
+      locationField.value = ''; // इनपुट रिकामी करा
       navigator.geolocation.getCurrentPosition(
         pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
           locationField.value = `https://maps.google.com/?q=${lat},${lon}`;
+          locationLoading.style.display = 'none'; // सूचना लपवा
         },
-        () => alert('लोकेशन मिळवण्यात अडचण आली. कृपया परवानगी द्या.')
+        err => {
+          alert('लोकेशन मिळवण्यात अडचण आली. कृपया परवानगी द्या.');
+          locationLoading.style.display = 'none'; // सूचना लपवा
+        }
       );
     } else {
       alert('तुमचा ब्राउझर लोकेशन सपोर्ट करत नाही.');
+      locationLoading.style.display = 'none'; // सूचना लपवा
     }
   });
 
@@ -151,7 +170,9 @@ document.addEventListener('DOMContentLoaded', function () {
     thankyouMessage.style.display = 'none';
 
     const dateVal = dateInput.value;
-    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate) {
+    const wasteVal = parseFloat(wasteInput.value);
+    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(wasteVal) || wasteVal < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
