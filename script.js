@@ -12,17 +12,16 @@ document.addEventListener('DOMContentLoaded', function () {
   const qrPayBtn = document.getElementById('qrPayBtn');
   const subtitle = document.querySelector('.subtitle');
 
-  // संयोजकांची यादी लोड करणे (Google Sheet कॉलम क्रम: Sr. No., गाव, संयोजकाचे नाव, मोबाईल नंबर, इतर माहिती)
-  const SHEET_URL = 'https://opensheet.elk.sh/1W059r6QUWecU8WY5OdLLybCMkPOPr_K5IXXEETUbrn4/Conveners';
+  // संयोजकांची यादी लोड करणे
+  const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners'; // ✅ नवीन Sheet ID
+
   fetch(SHEET_URL)
     .then(res => res.json())
     .then(data => {
-      // Sr. No. = row['Sr. No.'] किंवा row[0], गाव=row['गाव'] किंवा row[1], संयोजकाचे नाव=row['संयोजकाचे नाव'] किंवा row[2], मोबाईल=row['मोबाईल नंबर'] किंवा row[3]
       const items = data.map(row => {
         const village = (row['गाव'] || row[1] || '').toString().trim();
         const name = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
         const mobile = (row['मोबाईल नंबर'] || row[3] || '').toString().trim();
-        // Option: गाव + नाव (मोबाईल)
         return {
           displayName: village ? `${village} : ${name}` : name,
           sortKey: name,
@@ -40,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
         opt.style.textAlign = 'center';
         referenceSelect.appendChild(opt);
       });
-      // शेवटी 'यापैकी कोणीही नाही अन्य मार्ग'
       const otherOpt = document.createElement('option');
       otherOpt.value = 'यापैकी कोणीही नाही अन्य मार्ग';
       otherOpt.textContent = 'यापैकी कोणीही नाही अन्य मार्ग';
@@ -107,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
     errorMsg.style.display = 'none';
     thankyouMessage.style.display = 'none';
 
-    // तारीख योग्य आहे का?
     const dateVal = dateInput.value;
     if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate) {
       errorMsg.style.display = 'block';
@@ -120,12 +117,11 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => {
       data[key] = value;
     });
-    // तारीख व वेळेचा स्लॉट पाठवा
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
-    // ✅ Google Apps Script वेब अ‍ॅपचा नवीन URL वापरा!
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLBDdK2x0J2ioTqUqbU4mgn3vu18GXzShlUnnmOtvATZS6XZXe0ltSREO1Yjr0D9j7/exec';
+    // ✅ नवीन Web App URL वापरा!
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoK_-3i1Z4TCVT1x2e-d62Z1UWPx3hLNOpZxbdPPriSlA2-zVsEoCQjW8Ag1OpdsXevA/exec';
     const bodyData = new URLSearchParams(data).toString();
     fetch(SCRIPT_URL, {
       method: 'POST',
@@ -148,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 
-  // Thankyou मध्ये Exit बटण
   thankyouExitBtn && thankyouExitBtn.addEventListener('click', function () {
     thankyouMessage.style.display = 'none';
     form.style.display = 'block';
@@ -158,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (subtitle) subtitle.style.display = '';
   });
 
-  // QR/R-logo बटणवर क्लिक केल्यावर पेमेंट ॲप उघडा
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
