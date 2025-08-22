@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const thankyouMessage = document.getElementById('thankyouMessage');
   const locBtn = document.getElementById('locBtn');
   const locationField = document.getElementById('location');
-  const locationLoading = document.getElementById('location-loading');
   const referenceSelect = document.getElementById('reference');
   const timeslotSelect = document.getElementById('timeslot');
   const dateInput = document.getElementById('date');
@@ -142,23 +141,27 @@ document.addEventListener('DOMContentLoaded', function () {
   // लोकेशन मिळवणे
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
-      locationLoading.style.display = 'inline'; // ब्लिंकिंग सूचना दाखवा
+      locationField.classList.add('location-loading-placeholder'); // ब्लिंकिंग प्लेसहोल्डर क्लास जोडा
+      locationField.placeholder = 'लोकेशन घेत आहे...'; // ब्लिंकिंग मजकूर
       locationField.value = ''; // इनपुट रिकामी करा
       navigator.geolocation.getCurrentPosition(
         pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
           locationField.value = `https://maps.google.com/?q=${lat},${lon}`;
-          locationLoading.style.display = 'none'; // सूचना लपवा
+          locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
+          locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
         },
         err => {
           alert('लोकेशन मिळवण्यात अडचण आली. कृपया परवानगी द्या.');
-          locationLoading.style.display = 'none'; // सूचना लपवा
+          locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
+          locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
         }
       );
     } else {
       alert('तुमचा ब्राउझर लोकेशन सपोर्ट करत नाही.');
-      locationLoading.style.display = 'none'; // सूचना लपवा
+      locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
+      locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
     }
   });
 
