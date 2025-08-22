@@ -45,8 +45,8 @@
       }
     }
     .subtitle {
-      margin-top: 8px;
-      margin-bottom: 0px;
+      margin-top: 4px; /* कमी केले */
+      margin-bottom: 2px; /* समायोजित केले */
       font-size: 1rem;
       text-align: center;
       color: #000;
@@ -54,7 +54,7 @@
     }
     form {
       max-width: 410px;
-      margin: 10px auto 0 auto;
+      margin: 4px auto 0 auto; /* कमी केले */
       padding: 10px 24px 20px 24px;
       background: #ffffff;
       border-radius: 12px;
@@ -103,6 +103,15 @@
     }
     select option {
       text-align: left; /* सर्व पर्याय लेफ्ट अलाइन्ड, डीफॉल्ट सेंटर अलाइन्ड JavaScript मध्ये */
+    }
+    .location-loading-placeholder::placeholder {
+      animation: blink 1s infinite;
+      color: #15626a;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
     }
     .actions {
       display: flex;
@@ -226,18 +235,6 @@
       border: none;
       box-shadow: none;
     }
-    #location-loading {
-      display: none;
-      color: #15626a;
-      font-size: 0.9rem;
-      font-weight: 500;
-      animation: blink 1s infinite;
-    }
-    @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
     .date-row-group {
       margin-bottom: 7px;
     }
@@ -270,9 +267,9 @@
     }
     .date-row-fields > div {
       flex: 1 1 0;
-      min-width: 0;
+      min-width: 100px; /* किमान रुंदी */
+      max-width: 48%; /* जास्तीत जास्त रुंदी */
       text-align: left;
-      max-width: 48%; /* प्रत्येक फिल्डला समान रुंदी */
     }
     .date-row-fields input[type="date"] {
       max-width: 100%;
@@ -290,6 +287,7 @@
         justify-content: space-between;
       }
       .date-row-fields > div {
+        min-width: 90px;
         max-width: 48%;
       }
       .date-row-fields input[type="date"] {
@@ -306,6 +304,7 @@
         justify-content: flex-start;
       }
       .date-row-fields > div {
+        min-width: 100%;
         max-width: 100%;
         margin-bottom: 7px;
       }
@@ -345,7 +344,6 @@
         <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन">
       </button>
       <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" autocomplete="off" readonly>
-      <span id="location-loading">लोकेशन घेत आहे...</span>
     </div>
 
     <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
