@@ -205,7 +205,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // निधी डेटा लोड करणे
         fetch(FUNDS_SHEET_URL)
           .then(res => {
-            if (!res.ok) throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
+            if (!res.ok) {
+              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (2025) आणि ॲक्सेस तपासा.`);
+            }
             return res.json();
           })
           .then(funds => {
@@ -225,8 +227,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (totalFundsAmount === 0) {
               console.warn('निधी डेटा रिक्त किंवा अवैध आहे');
               totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
-              errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा.';
+              errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा. शीट सार्वजनिक आहे का?';
               errorMsg.style.display = 'block';
+            } else {
+              errorMsg.style.display = 'none';
             }
 
             // डिस्प्ले दाखवा
@@ -236,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('निधी डेटा लोड करताना त्रुटी:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
             totalsDisplay.style.display = 'block';
-            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा.';
+            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा. शीट सार्वजनिक आहे का? HTTP त्रुटी: ' + err.message;
             errorMsg.style.display = 'block';
           });
       })
