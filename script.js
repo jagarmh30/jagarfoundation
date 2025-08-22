@@ -24,35 +24,55 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('शीटमधून मिळालेला डेटा:', data); // डिबगिंगसाठी: संपूर्ण डेटा लॉग करा
 
       // कॉलम C मधील नावे घ्या
+      const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग'; // शेवटचा पर्याय ओळखा
       const items = data.map(row => {
         const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
         // क्रमवारीसाठी उपाधी काढून टाकणे
         const sortKey = fullName.replace(/^(श्री\.?|श्रीमती\.?|कु\.?|डॉ\.?)\s*/i, '').trim();
         return {
           displayName: fullName, // ड्रॉपडाउनमध्ये पूर्ण नाव (उपाधीसह)
-          sortKey: sortKey // क्रमवारीसाठी उपाधीशिवाय नाव
+          sortKey: sortKey, // क्रमवारीसाठी उपाधीशिवाय नाव
+          isLastOption: fullName === lastOption // शेवटचा पर्याय आहे का?
         };
       }).filter(it => it.displayName); // रिक्त नावे वगळा
 
       console.log('प्रोसेस्ड नावे:', items); // डिबगिंगसाठी: प्रोसेस्ड नावे लॉग करा
 
-      // मराठी क्रमवारीनुसार यादी क्रमवारी लावा
+      // मराठी क्रमवारीनुसार यादी क्रमवारी लावा (शेवटचा पर्याय वगळून)
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
-      items.sort((a, b) => {
+      const regularItems = items.filter(item => !item.isLastOption);
+      const lastItem = items.find(item => item.isLastOption);
+      regularItems.sort((a, b) => {
         const comparison = collator.compare(a.sortKey, b.sortKey);
         console.log(`क्रमवारी तुलना: ${a.sortKey} vs ${b.sortKey} = ${comparison}`); // डिबगिंगसाठी
         return comparison;
       });
 
       // ड्रॉपडाउन यादी तयार करा
-      referenceSelect.innerHTML = '<option value="" style="text-align:center">-- संयोजक निवडा --</option>';
-      items.forEach(item => {
+      referenceSelect.innerHTML = ''; // यादी रिकामी करा
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- संयोजक निवडा --';
+      defaultOption.style.textAlign = 'center'; // डीफॉल्ट पर्याय सेंटर अलाइन्ड
+      referenceSelect.appendChild(defaultOption);
+
+      // नियमित पर्याय जोडा (लेफ्ट अलाइन्ड)
+      regularItems.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.displayName;
         opt.textContent = item.displayName;
-        opt.style.textAlign = 'center';
+        opt.style.textAlign = 'left'; // पर्याय लेफ्ट अलाइन्ड
         referenceSelect.appendChild(opt);
       });
+
+      // शेवटचा पर्याय जोडा (लेफ्ट अलाइन्ड)
+      if (lastItem) {
+        const opt = document.createElement('option');
+        opt.value = lastItem.displayName;
+        opt.textContent = lastItem.displayName;
+        opt.style.textAlign = 'left'; // शेवटचा पर्याय लेफ्ट अलाइन्ड
+        referenceSelect.appendChild(opt);
+      }
 
       console.log('ड्रॉपडाउनमध्ये जोडलेली यादी:', referenceSelect.innerHTML); // डिबगिंगसाठी
     })
@@ -77,14 +97,24 @@ document.addEventListener('DOMContentLoaded', function () {
   dateInput.setAttribute('max', maxDate);
 
   dateInput.addEventListener('change', function () {
-    timeslotSelect.innerHTML = '<option value="" style="text-align:center">-- वेळ निवडा --</option>';
+    timeslotSelect.innerHTML = ''; // यादी रिकामी करा
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- वेळ निवडा --';
+    defaultOption.style.textAlign = 'center'; // डीफॉल्ट पर्याय सेंटर अलाइन्ड
+    timeslotSelect.appendChild(defaultOption);
+
     if (!this.value) {
       timeslotSelect.disabled = true;
       return;
     }
     if (this.value < minDate || this.value > maxDate) {
       timeslotSelect.disabled = true;
-      timeslotSelect.innerHTML = '<option value="" style="text-align:center">तारीख योग्य नाही</option>';
+      const errorOption = document.createElement('option');
+      errorOption.value = '';
+      errorOption.textContent = 'तारीख योग्य नाही';
+      errorOption.style.textAlign = 'center'; // एरर पर्याय सेंटर अलाइन्ड
+      timeslotSelect.appendChild(errorOption);
       return;
     }
     timeslotSelect.disabled = false;
@@ -92,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const opt = document.createElement('option');
       opt.value = slot.start;
       opt.textContent = slot.label;
-      opt.style.textAlign = 'center';
+      opt.style.textAlign = 'left'; // वेळ स्लॉट लेफ्ट अलाइन्ड
       timeslotSelect.appendChild(opt);
     });
   });
