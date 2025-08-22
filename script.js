@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return res.json();
     })
     .then(data => {
-      console.log('शीटमधून मिळालेला डेटा:', data);
+      console.log('संयोजक डेटा:', data);
 
       const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग';
       const items = data.map(row => {
@@ -38,16 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
         };
       }).filter(it => it.displayName);
 
-      console.log('प्रोसेस्ड नावे:', items);
+      console.log('प्रोसेस्ड संयोजक नावे:', items);
 
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       const regularItems = items.filter(item => !item.isLastOption);
       const lastItem = items.find(item => item.isLastOption);
-      regularItems.sort((a, b) => {
-        const comparison = collator.compare(a.sortKey, b.sortKey);
-        console.log(`क्रमवारी तुलना: ${a.sortKey} vs ${b.sortKey} = ${comparison}`);
-        return comparison;
-      });
+      regularItems.sort((a, b) => collator.compare(a.sortKey, b.sortKey));
 
       referenceSelect.innerHTML = '';
       const defaultOption = document.createElement('option');
@@ -71,8 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
         opt.style.textAlign = 'left';
         referenceSelect.appendChild(opt);
       }
-
-      console.log('ड्रॉपडाउनमध्ये जोडलेली यादी:', referenceSelect.innerHTML);
     })
     .catch(err => {
       console.error('संयोजक लोड करताना त्रुटी:', err);
@@ -167,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const SUBMISSION_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Submissions?t=' + Date.now();
     const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
 
-    // डमी डेटा (निधी डेटा उपलब्ध नसल्यास)
+    // डमी डेटा
     const dummyFundsTotal = 50000;
 
     // रद्दी डेटा लोड करणे
@@ -177,10 +171,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return res.json();
       })
       .then(data => {
-        console.log('रद्दी डेटा:', data);
+        console.log('कच्चा रद्दी डेटा:', data);
 
-        // एकूण रद्दीची बेरीज (डोनरच्या ताज्या सबमिशनसह)
-        const totalWasteAmount = data.reduce((sum, row) => sum + (parseFloat(row.waste) || 0), 0) + (parseFloat(currentWaste) || 0);
+        // रद्दीची बेरीज
+        const totalWasteAmount = data.reduce((sum, row) => {
+          const wasteValue = parseFloat(row.waste);
+          return sum + (isNaN(wasteValue) ? 0 : wasteValue);
+        }, 0) + (parseFloat(currentWaste) || 0);
+        console.log('एकूण रद्दी:', totalWasteAmount);
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${totalWasteAmount.toFixed(1)} किलो`;
 
         // निधी डेटा लोड करणे
@@ -188,14 +186,25 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(res => {
             if (!res.ok) {
               console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे');
-              return [{ G: dummyFundsTotal }];
+              return [];
             }
             return res.json();
           })
           .then(funds => {
-            // एकूण निधीची बेरीज (कॉलम G)
-            const totalFundsAmount = funds.reduce((sum, row) => sum + (parseFloat(row.G) || 0), 0);
+            console.log('कच्चा निधी डेटा:', funds);
+
+            // निधीची बेरीज
+            const totalFundsAmount = funds.reduce((sum, row) => {
+              const fundValue = parseFloat(row.G);
+              return sum + (isNaN(fundValue) ? 0 : fundValue);
+            }, 0);
+            console.log('एकूण निधी:', totalFundsAmount);
+
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${totalFundsAmount.toFixed(0)} रु.`;
+            if (totalFundsAmount === 0) {
+              console.warn('निधी डेटा रिक्त, डमी डेटा वापरत आहे');
+              totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
+            }
 
             // डिस्प्ले दाखवा
             totalsDisplay.style.display = 'block';
@@ -204,6 +213,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
             totalsDisplay.style.display = 'block';
+            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. डमी डेटा दाखवत आहे.';
+            errorMsg.style.display = 'block';
           });
       })
       .catch(err => {
@@ -264,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
-          // एकूण रक्कम लोड करा
           loadTotalsData(wasteVal);
         } else {
           throw new Error('सबमिशन अयशस्वी');
@@ -272,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .catch(err => {
         console.error("Final error:", err);
+        errorMsg.textContent = 'सबमिशन अयशस्वी झाले. कृपया पुन्हा प्रयत्न करा.';
         errorMsg.style.display = 'block';
       });
   });
