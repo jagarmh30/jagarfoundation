@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
     // ✅ तुझा Web App URL
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoK_-3i1Z4TCVT1x2e-d62Z1UWPx3hLNOpZxbdPPriSlA2-zVsEoCQjW8Ag1OpdsXevA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
     const bodyData = new URLSearchParams(data).toString();
 
     fetch(SCRIPT_URL, {
@@ -167,4 +167,3 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 });
-
