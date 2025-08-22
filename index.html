@@ -45,8 +45,8 @@
       }
     }
     .subtitle {
-      margin-top: 4px; /* कमी केले */
-      margin-bottom: 2px; /* समायोजित केले */
+      margin-top: 4px;
+      margin-bottom: 2px;
       font-size: 1rem;
       text-align: center;
       color: #000;
@@ -54,7 +54,7 @@
     }
     form {
       max-width: 410px;
-      margin: 4px auto 0 auto; /* कमी केले */
+      margin: 4px auto 0 auto;
       padding: 10px 24px 20px 24px;
       background: #ffffff;
       border-radius: 12px;
@@ -88,21 +88,21 @@
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none; /* क्रोममध्ये स्पिनर काढले */
+      -webkit-appearance: none;
       margin: 0;
     }
     input[type="number"] {
-      -moz-appearance: textfield; /* फायरफॉक्ससाठी */
+      -moz-appearance: textfield;
     }
     textarea {
       min-height: 56px;
       resize: vertical;
     }
     select {
-      text-align: left; /* निवडलेले पर्याय लेफ्ट अलाइन्ड */
+      text-align: left;
     }
     select option {
-      text-align: left; /* सर्व पर्याय लेफ्ट अलाइन्ड, डीफॉल्ट सेंटर अलाइन्ड JavaScript मध्ये */
+      text-align: left;
     }
     .location-loading-placeholder::placeholder {
       animation: blink 1s infinite;
@@ -248,27 +248,20 @@
       display: block;
       width: 100%;
     }
-    .date-row-label label {
-      margin: 0;
-      font-weight: inherit;
-      color: inherit;
-      font-size: 1.02rem;
-      display: inline-block;
-    }
     .date-row-fields {
       display: flex;
       flex-direction: row;
       gap: 8px;
       align-items: center;
       margin-bottom: 0;
-      justify-content: space-between; /* तारीख आणि वेळ जस्टीफाइड अलाइनमेंट */
+      justify-content: space-between;
       text-align: left;
       width: 100%;
     }
     .date-row-fields > div {
       flex: 1 1 0;
-      min-width: 100px; /* किमान रुंदी */
-      max-width: 48%; /* जास्तीत जास्त रुंदी */
+      min-width: 100px;
+      max-width: 48%;
       text-align: left;
     }
     .date-row-fields input[type="date"] {
@@ -277,7 +270,7 @@
     }
     .date-row-fields select {
       max-width: 100%;
-      text-align: left; /* वेळ स्लॉट लेफ्ट अलाइन्ड */
+      text-align: left;
     }
     @media (max-width: 600px) {
       .date-row-fields {
@@ -307,6 +300,34 @@
         min-width: 100%;
         max-width: 100%;
         margin-bottom: 7px;
+      }
+    }
+    /* मजकूर डिस्प्लेसाठी नवीन स्टाइल */
+    .totals-display {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: none; /* सुरुवातीला लपवलेले */
+    }
+    .total-item {
+      background: #e3fafc;
+      border: 1px solid #19aab8;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #15626a;
+      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+    }
+    @media (max-width: 600px) {
+      .totals-display {
+        padding: 0 8px;
+      }
+      .total-item {
+        font-size: 1rem;
+        max-width: 90vw;
       }
     }
     footer {
@@ -381,6 +402,11 @@
   </form>
   <div id="thankyouMessage">
     रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
+    <!-- मजकूर डिस्प्लेसाठी कंटेनर -->
+    <div class="totals-display" id="totalsDisplay">
+      <div class="total-item" id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
+      <div class="total-item" id="totalFunds">तुमच्यासह एकूण निधी प्राप्त: 0 रु.</div>
+    </div>
     <div id="thankyouActions">
       <button type="button" id="thankyouExitBtn">एग्झिट</button>
     </div>
