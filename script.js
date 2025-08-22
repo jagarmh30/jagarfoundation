@@ -167,3 +167,4 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 });
+
