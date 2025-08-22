@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const subtitle = document.querySelector('.subtitle');
 
   // संयोजकांची यादी लोड करणे
-  const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners'; // ✅ नवीन Sheet ID
+  const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners';
 
   fetch(SHEET_URL)
     .then(res => res.json())
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
     data.date = dateInput.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
-    // ✅ नवीन Web App URL वापरा!
+    // ✅ तुझा Web App URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoK_-3i1Z4TCVT1x2e-d62Z1UWPx3hLNOpZxbdPPriSlA2-zVsEoCQjW8Ag1OpdsXevA/exec';
     const bodyData = new URLSearchParams(data).toString();
 
@@ -130,16 +130,16 @@ document.addEventListener('DOMContentLoaded', function () {
       body: bodyData
     })
       .then(async res => {
-        const text = await res.text();           // raw response घ्या
-        console.log("Raw response:", text);      // Debug साठी
+        const text = await res.text();
+        console.log("Raw response:", text);
         try {
-          return JSON.parse(text);               // JSON मध्ये parse करा
+          return JSON.parse(text);
         } catch (e) {
           return { success: false, error: "Invalid JSON: " + text };
         }
       })
       .then(response => {
-        console.log("Parsed response:", response); // Debug साठी
+        console.log("Parsed response:", response);
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
