@@ -156,53 +156,66 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // डेटा साफ करणे (टेक्स्ट स्वरूप हाताळण्यासाठी)
+  function cleanNumericData(value) {
+    if (!value) return 0;
+    // टेक्स्टमधून अक्षरे काढा (उदा. "5.5 kg" -> "5.5", "10000 रु." -> "10000")
+    const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
+    const numericValue = parseFloat(cleanedValue);
+    return isNaN(numericValue) ? 0 : numericValue;
+  }
+
   // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
   function loadTotalsData(currentWaste) {
-    const SUBMISSION_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Submissions?t=' + Date.now();
+    const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
     const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
 
     // डमी डेटा
     const dummyFundsTotal = 50000;
 
     // रद्दी डेटा लोड करणे
-    fetch(SUBMISSION_SHEET_URL)
+    fetch(DONORS_SHEET_URL)
       .then(res => {
-        if (!res.ok) throw new Error('रद्दी डेटा लोड करताना त्रुटी: ' + res.status);
+        if (!res.ok) throw new Error(`रद्दी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
         return res.json();
       })
       .then(data => {
-        console.log('कच्चा रद्दी डेटा:', data);
+        console.log('कच्चा रद्दी डेटा (Donors शीट):', data);
 
         // रद्दीची बेरीज
-        const totalWasteAmount = data.reduce((sum, row) => {
-          const wasteValue = parseFloat(row.waste);
-          return sum + (isNaN(wasteValue) ? 0 : wasteValue);
-        }, 0) + (parseFloat(currentWaste) || 0);
+        const wasteValues = data.map(row => ({
+          waste: cleanNumericData(row.Quantity),
+          raw: row.Quantity
+        }));
+        console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
+
+        const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0) + cleanNumericData(currentWaste);
         console.log('एकूण रद्दी:', totalWasteAmount);
+
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${totalWasteAmount.toFixed(1)} किलो`;
 
         // निधी डेटा लोड करणे
         fetch(FUNDS_SHEET_URL)
           .then(res => {
-            if (!res.ok) {
-              console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे');
-              return [];
-            }
+            if (!res.ok) throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
             return res.json();
           })
           .then(funds => {
-            console.log('कच्चा निधी डेटा:', funds);
+            console.log('कच्चा निधी डेटा (2025 शीट):', funds);
 
             // निधीची बेरीज
-            const totalFundsAmount = funds.reduce((sum, row) => {
-              const fundValue = parseFloat(row.G);
-              return sum + (isNaN(fundValue) ? 0 : fundValue);
-            }, 0);
+            const fundValues = funds.map(row => ({
+              fund: cleanNumericData(row['रक्कम ₹']),
+              raw: row['रक्कम ₹']
+            }));
+            console.log('निधी मूल्ये (साफ केलेले):', fundValues);
+
+            const totalFundsAmount = fundValues.reduce((sum, item) => sum + item.fund, 0);
             console.log('एकूण निधी:', totalFundsAmount);
 
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${totalFundsAmount.toFixed(0)} रु.`;
             if (totalFundsAmount === 0) {
-              console.warn('निधी डेटा रिक्त, डमी डेटा वापरत आहे');
+              console.warn('निधी डेटा रिक्त किंवा अवैध, डमी डेटा वापरत आहे');
               totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
             }
 
@@ -210,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
             totalsDisplay.style.display = 'block';
           })
           .catch(err => {
-            console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे:', err);
+            console.error('निधी डेटा लोड करताना त्रुटी:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
             totalsDisplay.style.display = 'block';
             errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. डमी डेटा दाखवत आहे.';
@@ -219,10 +232,10 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .catch(err => {
         console.error('रद्दी डेटा लोड करताना त्रुटी:', err);
-        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${parseFloat(currentWaste || 0).toFixed(1)} किलो`;
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${cleanNumericData(currentWaste).toFixed(1)} किलो`;
         totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
         totalsDisplay.style.display = 'block';
-        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. फक्त तुमचे योगदान दाखवत आहे.';
         errorMsg.style.display = 'block';
       });
   }
@@ -236,8 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
     totalsDisplay.style.display = 'none';
 
     const dateVal = dateInput.value;
-    const wasteVal = parseFloat(wasteInput.value);
-    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(wasteVal) || wasteVal < 0) {
+    const wasteVal = wasteInput.value;
+    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
       errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
