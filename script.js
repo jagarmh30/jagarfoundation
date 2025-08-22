@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const qrPayBtn = document.getElementById('qrPayBtn');
   const wasteInput = document.getElementById('waste');
   const subtitle = document.querySelector('.subtitle');
+  const totalsDisplay = document.getElementById('totalsDisplay');
+  const totalWaste = document.getElementById('totalWaste');
+  const totalFunds = document.getElementById('totalFunds');
 
   // संयोजकांची यादी लोड करणे
   const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
@@ -22,60 +25,54 @@ document.addEventListener('DOMContentLoaded', function () {
       return res.json();
     })
     .then(data => {
-      console.log('शीटमधून मिळालेला डेटा:', data); // डिबगिंगसाठी: संपूर्ण डेटा लॉग करा
+      console.log('शीटमधून मिळालेला डेटा:', data);
 
-      // कॉलम C मधील नावे घ्या
-      const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग'; // शेवटचा पर्याय ओळखा
+      const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग';
       const items = data.map(row => {
         const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
-        // क्रमवारीसाठी उपाधी काढून टाकणे
         const sortKey = fullName.replace(/^(श्री\.?|श्रीमती\.?|कु\.?|डॉ\.?)\s*/i, '').trim();
         return {
-          displayName: fullName, // ड्रॉपडाउनमध्ये पूर्ण नाव (उपाधीसह)
-          sortKey: sortKey, // क्रमवारीसाठी उपाधीशिवाय नाव
-          isLastOption: fullName === lastOption // शेवटचा पर्याय आहे का?
+          displayName: fullName,
+          sortKey: sortKey,
+          isLastOption: fullName === lastOption
         };
-      }).filter(it => it.displayName); // रिक्त नावे वगळा
+      }).filter(it => it.displayName);
 
-      console.log('प्रोसेस्ड नावे:', items); // डिबगिंगसाठी: प्रोसेस्ड नावे लॉग करा
+      console.log('प्रोसेस्ड नावे:', items);
 
-      // मराठी क्रमवारीनुसार यादी क्रमवारी लावा (शेवटचा पर्याय वगळून)
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       const regularItems = items.filter(item => !item.isLastOption);
       const lastItem = items.find(item => item.isLastOption);
       regularItems.sort((a, b) => {
         const comparison = collator.compare(a.sortKey, b.sortKey);
-        console.log(`क्रमवारी तुलना: ${a.sortKey} vs ${b.sortKey} = ${comparison}`); // डिबगिंगसाठी
+        console.log(`क्रमवारी तुलना: ${a.sortKey} vs ${b.sortKey} = ${comparison}`);
         return comparison;
       });
 
-      // ड्रॉपडाउन यादी तयार करा
-      referenceSelect.innerHTML = ''; // यादी रिकामी करा
+      referenceSelect.innerHTML = '';
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
       defaultOption.textContent = '-- संयोजक निवडा --';
-      defaultOption.style.textAlign = 'center'; // डीफॉल्ट पर्याय सेंटर अलाइन्ड
+      defaultOption.style.textAlign = 'center';
       referenceSelect.appendChild(defaultOption);
 
-      // नियमित पर्याय जोडा (लेफ्ट अलाइन्ड)
       regularItems.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.displayName;
         opt.textContent = item.displayName;
-        opt.style.textAlign = 'left'; // पर्याय लेफ्ट अलाइन्ड
+        opt.style.textAlign = 'left';
         referenceSelect.appendChild(opt);
       });
 
-      // शेवटचा पर्याय जोडा (लेफ्ट अलाइन्ड)
       if (lastItem) {
         const opt = document.createElement('option');
         opt.value = lastItem.displayName;
         opt.textContent = lastItem.displayName;
-        opt.style.textAlign = 'left'; // शेवटचा पर्याय लेफ्ट अलाइन्ड
+        opt.style.textAlign = 'left';
         referenceSelect.appendChild(opt);
       }
 
-      console.log('ड्रॉपडाउनमध्ये जोडलेली यादी:', referenceSelect.innerHTML); // डिबगिंगसाठी
+      console.log('ड्रॉपडाउनमध्ये जोडलेली यादी:', referenceSelect.innerHTML);
     })
     .catch(err => {
       console.error('संयोजक लोड करताना त्रुटी:', err);
@@ -98,11 +95,11 @@ document.addEventListener('DOMContentLoaded', function () {
   dateInput.setAttribute('max', maxDate);
 
   dateInput.addEventListener('change', function () {
-    timeslotSelect.innerHTML = ''; // यादी रिकामी करा
+    timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = '-- वेळ निवडा --';
-    defaultOption.style.textAlign = 'center'; // डीफॉल्ट पर्याय सेंटर अलाइन्ड
+    defaultOption.style.textAlign = 'center';
     timeslotSelect.appendChild(defaultOption);
 
     if (!this.value) {
@@ -114,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const errorOption = document.createElement('option');
       errorOption.value = '';
       errorOption.textContent = 'तारीख योग्य नाही';
-      errorOption.style.textAlign = 'center'; // एरर पर्याय सेंटर अलाइन्ड
+      errorOption.style.textAlign = 'center';
       timeslotSelect.appendChild(errorOption);
       return;
     }
@@ -123,47 +120,101 @@ document.addEventListener('DOMContentLoaded', function () {
       const opt = document.createElement('option');
       opt.value = slot.start;
       opt.textContent = slot.label;
-      opt.style.textAlign = 'left'; // वेळ स्लॉट लेफ्ट अलाइन्ड
+      opt.style.textAlign = 'left';
       timeslotSelect.appendChild(opt);
     });
   });
 
-  // वेस्ट इनपुट व्हॅलिडेशन (केवळ आकडे)
+  // वेस्ट इनपुट व्हॅलिडेशन
   wasteInput.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9.]/g, ''); // फक्त आकडे आणि दशांश बिंदू स्वीकारा
+    this.value = this.value.replace(/[^0-9.]/g, '');
     if (this.value.includes('.')) {
       const parts = this.value.split('.');
-      if (parts.length > 2) this.value = parts[0] + '.' + parts[1]; // एकच दशांश बिंदू
-      if (parts[1]?.length > 2) this.value = parts[0] + '.' + parts[1].slice(0, 2); // दशांशानंतर फक्त 2 अंक
+      if (parts.length > 2) this.value = parts[0] + '.' + parts[1];
+      if (parts[1]?.length > 2) this.value = parts[0] + '.' + parts[1].slice(0, 2);
     }
   });
 
   // लोकेशन मिळवणे
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
-      locationField.classList.add('location-loading-placeholder'); // ब्लिंकिंग प्लेसहोल्डर क्लास जोडा
-      locationField.placeholder = 'लोकेशन घेत आहे...'; // ब्लिंकिंग मजकूर
-      locationField.value = ''; // इनपुट रिकामी करा
+      locationField.classList.add('location-loading-placeholder');
+      locationField.placeholder = 'लोकेशन घेत आहे...';
+      locationField.value = '';
       navigator.geolocation.getCurrentPosition(
         pos => {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
           locationField.value = `https://maps.google.com/?q=${lat},${lon}`;
-          locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
-          locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
+          locationField.classList.remove('location-loading-placeholder');
+          locationField.placeholder = '← आयकॉनवर टच करा';
         },
         err => {
           alert('लोकेशन मिळवण्यात अडचण आली. कृपया परवानगी द्या.');
-          locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
-          locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
+          locationField.classList.remove('location-loading-placeholder');
+          locationField.placeholder = '← आयकॉनवर टच करा';
         }
       );
     } else {
       alert('तुमचा ब्राउझर लोकेशन सपोर्ट करत नाही.');
-      locationField.classList.remove('location-loading-placeholder'); // ब्लिंकिंग क्लास काढा
-      locationField.placeholder = '← आयकॉनवर टच करा'; // मूळ प्लेसहोल्डर पुनर्स्थापित करा
+      locationField.classList.remove('location-loading-placeholder');
+      locationField.placeholder = '← आयकॉनवर टच करा';
     }
   });
+
+  // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
+  function loadTotalsData(currentWaste) {
+    const SUBMISSION_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Submissions?t=' + Date.now();
+    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
+
+    // डमी डेटा (निधी डेटा उपलब्ध नसल्यास)
+    const dummyFundsTotal = 50000;
+
+    // रद्दी डेटा लोड करणे
+    fetch(SUBMISSION_SHEET_URL)
+      .then(res => {
+        if (!res.ok) throw new Error('रद्दी डेटा लोड करताना त्रुटी: ' + res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('रद्दी डेटा:', data);
+
+        // एकूण रद्दीची बेरीज (डोनरच्या ताज्या सबमिशनसह)
+        const totalWasteAmount = data.reduce((sum, row) => sum + (parseFloat(row.waste) || 0), 0) + (parseFloat(currentWaste) || 0);
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${totalWasteAmount.toFixed(1)} किलो`;
+
+        // निधी डेटा लोड करणे
+        fetch(FUNDS_SHEET_URL)
+          .then(res => {
+            if (!res.ok) {
+              console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे');
+              return [{ G: dummyFundsTotal }];
+            }
+            return res.json();
+          })
+          .then(funds => {
+            // एकूण निधीची बेरीज (कॉलम G)
+            const totalFundsAmount = funds.reduce((sum, row) => sum + (parseFloat(row.G) || 0), 0);
+            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${totalFundsAmount.toFixed(0)} रु.`;
+
+            // डिस्प्ले दाखवा
+            totalsDisplay.style.display = 'block';
+          })
+          .catch(err => {
+            console.warn('निधी डेटा लोड करताना त्रुटी, डमी डेटा वापरत आहे:', err);
+            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
+            totalsDisplay.style.display = 'block';
+          });
+      })
+      .catch(err => {
+        console.error('रद्दी डेटा लोड करताना त्रुटी:', err);
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${parseFloat(currentWaste || 0).toFixed(1)} किलो`;
+        totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${dummyFundsTotal.toFixed(0)} रु.`;
+        totalsDisplay.style.display = 'block';
+        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+        errorMsg.style.display = 'block';
+      });
+  }
 
   // फॉर्म सबमिट करणे
   form.addEventListener('submit', function (e) {
@@ -171,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     errorMsg.style.display = 'none';
     thankyouMessage.style.display = 'none';
+    totalsDisplay.style.display = 'none';
 
     const dateVal = dateInput.value;
     const wasteVal = parseFloat(wasteInput.value);
@@ -212,6 +264,8 @@ document.addEventListener('DOMContentLoaded', function () {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
+          // एकूण रक्कम लोड करा
+          loadTotalsData(wasteVal);
         } else {
           throw new Error('सबमिशन अयशस्वी');
         }
@@ -224,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   thankyouExitBtn && thankyouExitBtn.addEventListener('click', function () {
     thankyouMessage.style.display = 'none';
+    totalsDisplay.style.display = 'none';
     form.style.display = 'block';
     form.reset();
     errorMsg.style.display = 'none';
