@@ -123,13 +123,23 @@ document.addEventListener('DOMContentLoaded', function () {
     // ✅ नवीन Web App URL वापरा!
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoK_-3i1Z4TCVT1x2e-d62Z1UWPx3hLNOpZxbdPPriSlA2-zVsEoCQjW8Ag1OpdsXevA/exec';
     const bodyData = new URLSearchParams(data).toString();
+
     fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: bodyData
     })
-      .then(res => res.json().catch(() => ({ success: true })))
+      .then(async res => {
+        const text = await res.text();           // raw response घ्या
+        console.log("Raw response:", text);      // Debug साठी
+        try {
+          return JSON.parse(text);               // JSON मध्ये parse करा
+        } catch (e) {
+          return { success: false, error: "Invalid JSON: " + text };
+        }
+      })
       .then(response => {
+        console.log("Parsed response:", response); // Debug साठी
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
@@ -139,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .catch(err => {
-        console.error(err);
+        console.error("Final error:", err);
         errorMsg.style.display = 'block';
       });
   });
