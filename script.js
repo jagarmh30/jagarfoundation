@@ -16,8 +16,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
 
   fetch(SHEET_URL)
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error('शीट डेटा लोड करताना त्रुटी: ' + res.status);
+      return res.json();
+    })
     .then(data => {
+      console.log('शीटमधून मिळालेला डेटा:', data); // डिबगिंगसाठी: संपूर्ण डेटा लॉग करा
+
       // कॉलम C मधील नावे घ्या
       const items = data.map(row => {
         const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
@@ -29,9 +34,15 @@ document.addEventListener('DOMContentLoaded', function () {
         };
       }).filter(it => it.displayName); // रिक्त नावे वगळा
 
+      console.log('प्रोसेस्ड नावे:', items); // डिबगिंगसाठी: प्रोसेस्ड नावे लॉग करा
+
       // मराठी क्रमवारीनुसार यादी क्रमवारी लावा
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
-      items.sort((a, b) => collator.compare(a.sortKey, b.sortKey));
+      items.sort((a, b) => {
+        const comparison = collator.compare(a.sortKey, b.sortKey);
+        console.log(`क्रमवारी तुलना: ${a.sortKey} vs ${b.sortKey} = ${comparison}`); // डिबगिंगसाठी
+        return comparison;
+      });
 
       // ड्रॉपडाउन यादी तयार करा
       referenceSelect.innerHTML = '<option value="" style="text-align:center">-- संयोजक निवडा --</option>';
@@ -42,8 +53,14 @@ document.addEventListener('DOMContentLoaded', function () {
         opt.style.textAlign = 'center';
         referenceSelect.appendChild(opt);
       });
+
+      console.log('ड्रॉपडाउनमध्ये जोडलेली यादी:', referenceSelect.innerHTML); // डिबगिंगसाठी
     })
-    .catch(err => console.error('संयोजक लोड करताना त्रुटी:', err));
+    .catch(err => {
+      console.error('संयोजक लोड करताना त्रुटी:', err);
+      errorMsg.textContent = 'संयोजकांची यादी लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+      errorMsg.style.display = 'block';
+    });
 
   // तारीख व वेळेचा स्लॉट निवडणे
   const SLOTS = [
