@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // डेटा साफ करणे (टेक्स्ट स्वरूप हाताळण्यासाठी)
   function cleanNumericData(value) {
     if (!value) return 0;
-    // टेक्स्टमधून अक्षरे काढा (उदा. "5.5 kg" -> "5.5", "10000 रु." -> "10000", "₹10000" -> "10000")
+    // टेक्स्टमधून अक्षरे काढा (उदा. "5.5 kg" -> "5.5", "10000 रु." -> "10000", "₹10000" -> "10000", "10000/-" -> "10000")
     const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
     const numericValue = parseFloat(cleanedValue);
     return isNaN(numericValue) ? 0 : numericValue;
@@ -198,9 +198,9 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
 
         const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0);
-        console.log('एकूण रद्दी:', totalWasteAmount);
+        console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
 
-        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${totalWasteAmount.toFixed(1)} किलो`;
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
 
         // निधी डेटा लोड करणे
         fetch(FUNDS_SHEET_URL)
@@ -213,19 +213,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // निधीची बेरीज
             const fundValues = funds.map(row => ({
-              fund: cleanNumericData(row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || 0),
-              raw: row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || 'N/A'
+              fund: cleanNumericData(row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 0),
+              raw: row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 'N/A'
             }));
             console.log('निधी मूल्ये (साफ केलेले):', fundValues);
 
             const totalFundsAmount = fundValues.reduce((sum, item) => sum + item.fund, 0);
             console.log('एकूण निधी:', totalFundsAmount);
 
-            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${totalFundsAmount.toFixed(0)} रु.`;
+            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
             if (totalFundsAmount === 0) {
               console.warn('निधी डेटा रिक्त किंवा अवैध आहे');
               totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
-              errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट तपासा.';
+              errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा.';
               errorMsg.style.display = 'block';
             }
 
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('निधी डेटा लोड करताना त्रुटी:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
             totalsDisplay.style.display = 'block';
-            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट तपासा.';
+            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा.';
             errorMsg.style.display = 'block';
           });
       })
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: 0 किलो`;
         totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
         totalsDisplay.style.display = 'block';
-        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. कृपया शीट तपासा.';
+        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (Donors), कॉलम नाव (Quantity), आणि डेटा तपासा.';
         errorMsg.style.display = 'block';
       });
   }
