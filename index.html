@@ -54,14 +54,6 @@
       color: #000;
       font-weight: 500;
     }
-    .disclaimer {
-      color: #b40000;
-      font-size: 0.9rem;
-      text-align: center;
-      margin: 8px auto;
-      max-width: 400px;
-      font-weight: 500;
-    }
     form {
       max-width: 410px;
       margin: 4px auto 0 auto;
@@ -346,11 +338,13 @@
       color: #fff;
       text-align: center;
       padding: 16px 0 12px 0;
-      margin-top: 36px;
       font-size: 1rem;
       letter-spacing: 0.5px;
       border-top: 1.5px solid #19aab8;
       text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
   </style>
 </head>
@@ -360,9 +354,6 @@
   </header>
   <div class="subtitle">
     उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.
-  </div>
-  <div class="disclaimer">
-    इमेजेस डाउनलोड करणे किंवा स्क्रीनशॉट घेणे निषिद्ध आहे.
   </div>
   <div class="success" id="success">फॉर्म सबमिट झाला. धन्यवाद!</div>
   <form id="main-form" autocomplete="off">
@@ -418,8 +409,8 @@
     रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
   </div>
   <div class="totals-display" id="totalsDisplay">
-    <div class="total-item" id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
-    <div class="total-item" id="totalFunds">तुमच्यासह एकूण निधी प्राप्त: 0 रु.</div>
+    <div class="total-item" id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 2100 किलो</div>
+    <div class="total-item" id="totalFunds">तुमच्यासह एकूण निधी प्राप्त: 1700 रु.</div>
   </div>
   <div id="thankyouActions">
     <button type="button" id="thankyouExitBtn">एग्झिट</button>
