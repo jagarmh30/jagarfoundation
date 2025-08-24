@@ -37,15 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const villages = [];
       const convenersByVillage = {};
-      let lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)"; // डिफॉल्ट लास्ट ऑप्शन
-
-      // लास्ट ऑप्शन शीटमधून घेण्याचा प्रयत्न
-      const lastOptionFromSheet = data.find(row => row['लास्ट ऑप्शन'])?.['लास्ट ऑप्शन'] || null;
-      if (lastOptionFromSheet) {
-        lastOption = lastOptionFromSheet.trim();
-      } else {
-        console.warn('लास्ट ऑप्शन कॉलम "लास्ट ऑप्शन" सापडला नाही, डिफॉल्ट वापरले:', lastOption);
-      }
 
       data.forEach(row => {
         const village = (row['गाव'] || '').toString().trim();
@@ -71,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       console.log('गावांची यादी:', villages);
       console.log('गावानुसार संयोजक:', convenersByVillage);
-      console.log('लास्ट ऑप्शन:', lastOption);
 
       // गाव ड्रॉपडाउन भरा
       villageSelect.innerHTML = '';
@@ -90,12 +80,12 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       // संयोजक ड्रॉपडाउन भरा (सुरुवातीला सर्व)
-      updateConveners(convenersByVillage, lastOption);
+      updateConveners(convenersByVillage);
 
       // गाव बदलल्यावर संयोजक अपडेट
       villageSelect.addEventListener('change', function () {
         const selectedVillage = this.value;
-        updateConveners(convenersByVillage, lastOption, selectedVillage);
+        updateConveners(convenersByVillage, selectedVillage);
       });
     })
     .catch(err => {
@@ -105,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
   // संयोजक ड्रॉपडाउन अपडेट फंक्शन
-  function updateConveners(convenersByVillage, lastOption, selectedVillage = null) {
+  function updateConveners(convenersByVillage, selectedVillage = null) {
     referenceSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
@@ -133,12 +123,17 @@ document.addEventListener('DOMContentLoaded', function () {
       referenceSelect.appendChild(opt);
     });
 
-    // लास्ट ऑप्शन नेहमी शेवटी जोडणे
-    const lastOpt = document.createElement('option');
-    lastOpt.value = lastOption;
-    lastOpt.textContent = lastOption;
-    lastOpt.style.textAlign = 'left';
-    referenceSelect.appendChild(lastOpt);
+    // लास्ट ऑप्शन म्हणून शेवटचे नाव जोडणे
+    if (conveners.length > 0) {
+      const lastOption = conveners[conveners.length - 1];
+      if (lastOption === "यापैकी कोणीही नाही (अन्य मार्ग)") {
+        const lastOpt = document.createElement('option');
+        lastOpt.value = lastOption;
+        lastOpt.textContent = lastOption;
+        lastOpt.style.textAlign = 'left';
+        referenceSelect.appendChild(lastOpt);
+      }
+    }
   }
 
   // तारीख व वेळेचा स्लॉट निवडणे
