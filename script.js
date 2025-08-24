@@ -103,19 +103,19 @@ document.addEventListener('DOMContentLoaded', function () {
     defaultOption.style.textAlign = 'center';
     referenceSelect.appendChild(defaultOption);
 
-    let conveners = [];
+    let allConveners = [];
     if (selectedVillage) {
-      conveners = convenersByVillage[selectedVillage] || [];
+      allConveners = convenersByVillage[selectedVillage] || [];
     } else {
-      // सर्व गावांतील संयोजक एकत्र करणे
       for (let village in convenersByVillage) {
-        conveners = conveners.concat(convenersByVillage[village]);
+        allConveners = allConveners.concat(convenersByVillage[village]);
       }
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
-      conveners.sort((a, b) => collator.compare(a, b));
+      allConveners.sort((a, b) => collator.compare(a, b));
     }
 
-    conveners.forEach(name => {
+    // सर्व संयोजक जोडा
+    allConveners.forEach(name => {
       const opt = document.createElement('option');
       opt.value = name;
       opt.textContent = name;
@@ -123,17 +123,13 @@ document.addEventListener('DOMContentLoaded', function () {
       referenceSelect.appendChild(opt);
     });
 
-    // लास्ट ऑप्शन म्हणून शेवटचे नाव जोडणे
-    if (conveners.length > 0) {
-      const lastOption = conveners[conveners.length - 1];
-      if (lastOption === "यापैकी कोणीही नाही (अन्य मार्ग)") {
-        const lastOpt = document.createElement('option');
-        lastOpt.value = lastOption;
-        lastOpt.textContent = lastOption;
-        lastOpt.style.textAlign = 'left';
-        referenceSelect.appendChild(lastOpt);
-      }
-    }
+    // शेवटचे नाव "यापैकी कोणीही नाही (अन्य मार्ग)" म्हणून स्वतंत्रपणे जोडा
+    const lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)";
+    const lastOpt = document.createElement('option');
+    lastOpt.value = lastOption;
+    lastOpt.textContent = lastOption;
+    lastOpt.style.textAlign = 'left';
+    referenceSelect.appendChild(lastOpt);
   }
 
   // तारीख व वेळेचा स्लॉट निवडणे
