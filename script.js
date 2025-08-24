@@ -37,7 +37,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const villages = [];
       const convenersByVillage = {};
-      const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग';
+      let lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)"; // डिफॉल्ट लास्ट ऑप्शन
+
+      // लास्ट ऑप्शन शीटमधून घेण्याचा प्रयत्न
+      const lastOptionFromSheet = data.find(row => row['लास्ट ऑप्शन'])?.['लास्ट ऑप्शन'] || null;
+      if (lastOptionFromSheet) {
+        lastOption = lastOptionFromSheet.trim();
+      } else {
+        console.warn('लास्ट ऑप्शन कॉलम "लास्ट ऑप्शन" सापडला नाही, डिफॉल्ट वापरले:', lastOption);
+      }
 
       data.forEach(row => {
         const village = (row['गाव'] || '').toString().trim();
@@ -63,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       console.log('गावांची यादी:', villages);
       console.log('गावानुसार संयोजक:', convenersByVillage);
+      console.log('लास्ट ऑप्शन:', lastOption);
 
       // गाव ड्रॉपडाउन भरा
       villageSelect.innerHTML = '';
@@ -248,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(FUNDS_SHEET_URL)
           .then(res => {
             if (!res.ok) {
-              throw new Error(`निधी डेटा लोड करताना त्रुტი: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
+              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
             }
             return res.json();
           })
@@ -268,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
             totalsDisplay.style.display = 'block';
           })
           .catch(err => {
-            console.error('निधी डेटा लोड करताना त्रुტი:', err);
+            console.error('निधी डेटा लोड करताना त्रुटी:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
             totalsDisplay.style.display = 'block';
           });
