@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
   function loadTotalsData() {
     const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
-    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/2025?t=' + Date.now();
+    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/FUNDS?t=' + Date.now();
 
     // रद्दी डेटा लोड करणे
     fetch(DONORS_SHEET_URL)
@@ -191,12 +191,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(FUNDS_SHEET_URL)
           .then(res => {
             if (!res.ok) {
-              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (2025) आणि ॲक्सेस तपासा.`);
+              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
             }
             return res.json();
           })
           .then(funds => {
-            console.log('कच्चा निधी डेटा (2025 शीट):', funds);
+            console.log('कच्चा निधी डेटा (FUNDS शीट):', funds);
             const fundValues = funds.map(row => ({
               fund: cleanNumericData(row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 0),
               raw: row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 'N/A'
