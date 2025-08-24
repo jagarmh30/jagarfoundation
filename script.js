@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const locBtn = document.getElementById('locBtn');
   const locationField = document.getElementById('location');
   const referenceSelect = document.getElementById('reference');
+  const villageSelect = document.getElementById('village');
   const timeslotSelect = document.getElementById('timeslot');
   const dateInput = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     img.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
-  // संयोजकांची यादी लोड करणे
+  // संयोजक आणि गाव डेटा लोड करणे
   const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
 
   fetch(SHEET_URL)
@@ -32,48 +33,104 @@ document.addEventListener('DOMContentLoaded', function () {
       return res.json();
     })
     .then(data => {
-      console.log('संयोजक डेटा:', data);
+      console.log('शीट डेटा:', data);
+
+      const villages = [];
+      const convenersByVillage = {};
       const lastOption = 'यापैकी कोणीही नाही अन्य मार्ग';
-      const items = data.map(row => {
-        const fullName = (row['संयोजकाचे नाव'] || row[2] || '').toString().trim();
-        const sortKey = fullName.replace(/^(श्री\.?|श्रीमती\.?|कु\.?|डॉ\.?)\s*/i, '').trim();
-        return { displayName: fullName, sortKey, isLastOption: fullName === lastOption };
-      }).filter(it => it.displayName);
-      console.log('प्रोसेस्ड संयोजक नावे:', items);
 
-      const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
-      const regularItems = items.filter(item => !item.isLastOption);
-      const lastItem = items.find(item => item.isLastOption);
-      regularItems.sort((a, b) => collator.compare(a.sortKey, b.sortKey));
+      data.forEach(row => {
+        const village = (row['गाव'] || '').toString().trim();
+        const fullName = (row['संयोजकाचे नाव'] || '').toString().trim();
 
-      referenceSelect.innerHTML = '';
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = '-- संयोजक निवडा --';
-      defaultOption.style.textAlign = 'center';
-      referenceSelect.appendChild(defaultOption);
-
-      regularItems.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.displayName;
-        opt.textContent = item.displayName;
-        opt.style.textAlign = 'left';
-        referenceSelect.appendChild(opt);
+        if (village && fullName) {
+          if (!convenersByVillage[village]) {
+            convenersByVillage[village] = [];
+            villages.push(village);
+          }
+          convenersByVillage[village].push(fullName);
+        }
       });
 
-      if (lastItem) {
-        const opt = document.createElement('option');
-        opt.value = lastItem.displayName;
-        opt.textContent = lastItem.displayName;
-        opt.style.textAlign = 'left';
-        referenceSelect.appendChild(opt);
+      // गाव सॉर्ट करणे (मराठी क्रमवारी)
+      const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
+      villages.sort((a, b) => collator.compare(a, b));
+
+      // प्रत्येक गावातील संयोजक सॉर्ट करणे
+      for (let village in convenersByVillage) {
+        convenersByVillage[village].sort((a, b) => collator.compare(a, b));
       }
+
+      console.log('गावांची यादी:', villages);
+      console.log('गावानुसार संयोजक:', convenersByVillage);
+
+      // गाव ड्रॉपडाउन भरा
+      villageSelect.innerHTML = '';
+      const defaultVillageOption = document.createElement('option');
+      defaultVillageOption.value = '';
+      defaultVillageOption.textContent = '-- गाव निवडा --';
+      defaultVillageOption.style.textAlign = 'center';
+      villageSelect.appendChild(defaultVillageOption);
+
+      villages.forEach(village => {
+        const opt = document.createElement('option');
+        opt.value = village;
+        opt.textContent = village;
+        opt.style.textAlign = 'left';
+        villageSelect.appendChild(opt);
+      });
+
+      // संयोजक ड्रॉपडाउन भरा (सुरुवातीला सर्व)
+      updateConveners(convenersByVillage, lastOption);
+
+      // गाव बदलल्यावर संयोजक अपडेट
+      villageSelect.addEventListener('change', function () {
+        const selectedVillage = this.value;
+        updateConveners(convenersByVillage, lastOption, selectedVillage);
+      });
     })
     .catch(err => {
-      console.error('संयोजक लोड करताना त्रुटी:', err);
-      errorMsg.textContent = 'संयोजकांची यादी लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+      console.error('शीट डेटा लोड करताना त्रुटी:', err);
+      errorMsg.textContent = 'डेटा लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
       errorMsg.style.display = 'block';
     });
+
+  // संयोजक ड्रॉपडाउन अपडेट फंक्शन
+  function updateConveners(convenersByVillage, lastOption, selectedVillage = null) {
+    referenceSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- संयोजक निवडा --';
+    defaultOption.style.textAlign = 'center';
+    referenceSelect.appendChild(defaultOption);
+
+    let conveners = [];
+    if (selectedVillage) {
+      conveners = convenersByVillage[selectedVillage] || [];
+    } else {
+      // सर्व गावांतील संयोजक एकत्र करणे
+      for (let village in convenersByVillage) {
+        conveners = conveners.concat(convenersByVillage[village]);
+      }
+      const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
+      conveners.sort((a, b) => collator.compare(a, b));
+    }
+
+    conveners.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      opt.style.textAlign = 'left';
+      referenceSelect.appendChild(opt);
+    });
+
+    // लास्ट ऑप्शन नेहमी शेवटी जोडणे
+    const lastOpt = document.createElement('option');
+    lastOpt.value = lastOption;
+    lastOpt.textContent = lastOption;
+    lastOpt.style.textAlign = 'left';
+    referenceSelect.appendChild(lastOpt);
+  }
 
   // तारीख व वेळेचा स्लॉट निवडणे
   const SLOTS = [
@@ -191,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(FUNDS_SHEET_URL)
           .then(res => {
             if (!res.ok) {
-              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
+              throw new Error(`निधी डेटा लोड करताना त्रुტი: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
             }
             return res.json();
           })
@@ -211,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
             totalsDisplay.style.display = 'block';
           })
           .catch(err => {
-            console.error('निधी डेटा लोड करताना त्रुटी:', err);
+            console.error('निधी डेटा लोड करताना त्रुტი:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
             totalsDisplay.style.display = 'block';
           });
