@@ -206,12 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('एकूण निधी:', totalFundsAmount);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
             if (totalFundsAmount === 0) {
-              console.warn('निधी डेटा रिक्त किंवा अवैध आहे');
-              totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
-              errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा. शीट सार्वजनिक आहे का?';
-              errorMsg.style.display = 'block';
-            } else {
-              errorMsg.style.display = 'none';
+              console.warn('निधी डेटा रिक्त किंवा अवैध आहे. शीट ॲक्सेस किंवा डेटा तपासा.');
             }
             totalsDisplay.style.display = 'block';
           })
@@ -219,8 +214,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('निधी डेटा लोड करताना त्रुटी:', err);
             totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
             totalsDisplay.style.display = 'block';
-            errorMsg.textContent = 'निधी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (2025), कॉलम नाव (रक्कम ₹), आणि डेटा तपासा. शीट सार्वजनिक आहे का? HTTP त्रुटी: ' + err.message;
-            errorMsg.style.display = 'block';
           });
       })
       .catch(err => {
@@ -228,8 +221,6 @@ document.addEventListener('DOMContentLoaded', function () {
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: 0 किलो`;
         totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
         totalsDisplay.style.display = 'block';
-        errorMsg.textContent = 'रद्दी डेटा लोड करताना त्रुटी आली. कृपया शीट नाव (Donors), कॉलम नाव (Quantity), आणि डेटा तपासा.';
-        errorMsg.style.display = 'block';
       });
   }
 
@@ -339,21 +330,22 @@ style.textContent = `
     50% { opacity: 0; }
   }
   #totalsDisplay {
-    border: 2px solid #000;
-    padding: 10px;
-    margin: 10px 0;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 0 16px;
     display: none;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
   #totalWaste, #totalFunds {
-    border: 1px solid #ccc;
-    padding: 5px;
-    background-color: #fff;
-    border-radius: 3px;
+    background: #e3fafc;
+    border: 1px solid #19aab8;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #15626a;
+    box-shadow: 0 2px 8px rgba(0,0,60,0.1);
   }
   #thankyouExitBtn {
     display: none;
