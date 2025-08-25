@@ -236,8 +236,8 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(data => {
         console.log('कच्चा रद्दी डेटा (Donors शीट):', data);
         const wasteValues = data.map(row => ({
-          waste: cleanNumericData(row.Quantity),
-          raw: row.Quantity
+          waste: cleanNumericData(row['Quantity'] || row['quantity'] || 0),
+          raw: row['Quantity'] || row['quantity'] || 'N/A'
         }));
         console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
         const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0);
