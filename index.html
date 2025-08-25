@@ -11,6 +11,9 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     header {
       margin: 0;
@@ -62,6 +65,7 @@
       border-radius: 12px;
       box-shadow: 0 3px 16px rgba(0,0,60,0.10);
       position: relative;
+      flex: 1 0 auto;
     }
     label {
       display: block;
@@ -351,9 +355,8 @@
       letter-spacing: 0.5px;
       border-top: 1.5px solid #19aab8;
       text-align: center;
-      position: fixed;
-      bottom: 0;
       width: 100%;
+      margin-top: auto;
     }
   </style>
 </head>
