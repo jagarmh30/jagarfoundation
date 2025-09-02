@@ -133,6 +133,13 @@
       margin: 0 0 4px 0;
       text-align: center;
       display: none;
+      animation: fadeInOut 3s ease-in-out forwards;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; display: none; }
     }
     .success {
       color: #097c00;
@@ -281,7 +288,7 @@
       max-width: 48%;
       text-align: left;
     }
-    .date-row-fields select {
+    .date-row-fields select, .date-row-fields input[type="date"] {
       max-width: 100%;
       text-align: left;
     }
