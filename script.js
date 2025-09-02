@@ -10,22 +10,21 @@ document.addEventListener('DOMContentLoaded', function () {
   const timeslotSelect = document.getElementById('timeslot');
   const dateInput = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
-  const qrPayImg = document.getElementById('qrPayImg');
+  const qrPayBtn = document.getElementById('qrPayBtn');
   const wasteInput = document.getElementById('waste');
-  const mobileInput = document.getElementById('mobile');
   const subtitle = document.querySelector('.subtitle');
   const totalsDisplay = document.getElementById('totalsDisplay');
   const totalWaste = document.getElementById('totalWaste');
   const totalFunds = document.getElementById('totalFunds');
 
-  // इमेजेसवर उजव्या क्लिक आणि ड्रॅग अक्षम करणे
+  // Disable right-click and drag on images
   const images = document.querySelectorAll('img');
   images.forEach(img => {
     img.addEventListener('contextmenu', (e) => e.preventDefault());
     img.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
-  // संयोजक आणि गाव डेटा लोड करणे
+  // Load convener and village data
   const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
 
   fetch(SHEET_URL)
@@ -52,11 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
 
-      // गाव सॉर्ट करणे (मराठी क्रमवारी)
+      // Sort villages (Marathi collation)
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       villages.sort((a, b) => collator.compare(a, b));
 
-      // प्रत्येक गावातील संयोजक सॉर्ट करणे
+      // Sort conveners for each village
       for (let village in convenersByVillage) {
         convenersByVillage[village].sort((a, b) => collator.compare(a, b));
       }
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('गावांची यादी:', villages);
       console.log('गावानुसार संयोजक:', convenersByVillage);
 
-      // गाव ड्रॉपडाउन भरा
+      // Populate village dropdown
       villageSelect.innerHTML = '';
       const defaultVillageOption = document.createElement('option');
       defaultVillageOption.value = '';
@@ -80,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
         villageSelect.appendChild(opt);
       });
 
-      // संयोजक ड्रॉपडाउन भरा (सुरुवातीला सर्व)
+      // Populate convener dropdown (initially all)
       updateConveners(convenersByVillage);
 
-      // गाव बदलल्यावर संयोजक अपडेट
+      // Update conveners when village changes
       villageSelect.addEventListener('change', function () {
         const selectedVillage = this.value;
         updateConveners(convenersByVillage, selectedVillage);
@@ -95,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
       errorMsg.style.display = 'block';
     });
 
-  // संयोजक ड्रॉपडाउन अपडेट फंक्शन
+  // Update convener dropdown function
   function updateConveners(convenersByVillage, selectedVillage = null) {
     referenceSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -115,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
       allConveners.sort((a, b) => collator.compare(a, b));
     }
 
-    // सर्व संयोजक जोडा
+    // Add all conveners
     allConveners.forEach(name => {
       const opt = document.createElement('option');
       opt.value = name;
@@ -124,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
       referenceSelect.appendChild(opt);
     });
 
-    // शेवटचे नाव "यापैकी कोणीही नाही (अन्य मार्ग)" म्हणून स्वतंत्रपणे जोडा
+    // Add "None of the above" option
     const lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)";
     const lastOpt = document.createElement('option');
     lastOpt.value = lastOption;
@@ -133,74 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
     referenceSelect.appendChild(lastOpt);
   }
 
-  // शनिवार आणि रविवारच्या तारखा मिळवणे
-  function getWeekends() {
-    const weekends = [];
-    const startDate = new Date('2025-09-15');
-    const endDate = new Date('2025-10-15');
-    let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
-      if (currentDate.getDay() === 0 || currentDate.getDay() === 6) { // रविवार (0) किंवा शनिवार (6)
-        weekends.push(new Date(currentDate));
-      }
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return weekends;
-  }
-
-  // Flatpickr इनिशियलाइझ करणे
-  flatpickr(dateInput, {
-    minDate: '2025-09-15',
-    maxDate: '2025-10-15',
-    enable: getWeekends(),
-    dateFormat: 'Y-m-d',
-    locale: {
-      firstDayOfWeek: 1, // सोमवारपासून आठवडा सुरू होतो
-      weekdays: {
-        shorthand: ['रवि', 'सोम', 'मंगळ', 'बुध', 'गुरु', 'शुक्र', 'शनि'],
-        longhand: ['रविवार', 'सोमवार', 'मंगळवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार']
-      },
-      months: {
-        shorthand: ['जाने', 'फेब', 'मार्च', 'एप्रिल', 'मे', 'जून', 'जुलै', 'ऑग', 'सप्टे', 'ऑक्टो', 'नोव्हे', 'डिसे'],
-        longhand: ['जानेवारी', 'फेब्रुवारी', 'मार्च', 'एप्रिल', 'मे', 'जून', 'जुलै', 'ऑगस्ट', 'सप्टेंबर', 'ऑक्टोबर', 'नोव्हेंबर', 'डिसेंबर']
-      }
-    },
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const date = new Date(dayElem.dateObj);
-      if (date.getDay() === 0 || date.getDay() === 6) {
-        dayElem.classList.add('weekend');
-      } else {
-        dayElem.classList.add('non-weekend');
-      }
-    },
-    onChange: function(selectedDates, dateStr, instance) {
-      timeslotSelect.innerHTML = '';
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = '-- वेळ निवडा --';
-      defaultOption.style.textAlign = 'center';
-      timeslotSelect.appendChild(defaultOption);
-
-      if (!dateStr) {
-        timeslotSelect.disabled = true;
-        dateInput.classList.remove('valid-date');
-        return;
-      }
-
-      timeslotSelect.disabled = false;
-      dateInput.classList.add('valid-date');
-      SLOTS.forEach(slot => {
-        const opt = document.createElement('option');
-        opt.value = slot.start;
-        opt.textContent = slot.label;
-        opt.style.textAlign = 'left';
-        timeslotSelect.appendChild(opt);
-      });
-    }
-  });
-
-  // तारीख व वेळेचा स्लॉट निवडणे
+  // Date and timeslot selection
   const SLOTS = [
     { label: "08:00 AM - 10:00 AM", start: "08:00" },
     { label: "10:00 AM - 12:00 PM", start: "10:00" },
@@ -209,8 +141,71 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: "04:00 PM - 06:00 PM", start: "16:00" },
     { label: "05:00 PM - 07:00 PM", start: "17:00" }
   ];
+  const minDate = '2025-09-15';
+  const maxDate = '2025-10-15';
+  dateInput.setAttribute('min', minDate);
+  dateInput.setAttribute('max', maxDate);
 
-  // वेस्ट इनपुट व्हॅलिडेशन
+  // Function to check if a date is a weekend (Saturday or Sunday)
+  function isWeekend(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDay();
+    return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
+  }
+
+  // Function to get all weekend dates between minDate and maxDate
+  function getWeekendDates(startDate, endDate) {
+    const weekends = [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    let current = new Date(start);
+
+    while (current <= end) {
+      if (isWeekend(current)) {
+        const formattedDate = current.toISOString().split('T')[0];
+        weekends.push(formattedDate);
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    return weekends;
+  }
+
+  // Populate timeslot dropdown based on date selection
+  dateInput.addEventListener('change', function () {
+    timeslotSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- वेळ निवडा --';
+    defaultOption.style.textAlign = 'center';
+    timeslotSelect.appendChild(defaultOption);
+
+    const selectedDate = this.value;
+    if (!selectedDate) {
+      timeslotSelect.disabled = true;
+      return;
+    }
+
+    if (selectedDate < minDate || selectedDate > maxDate || !isWeekend(selectedDate)) {
+      timeslotSelect.disabled = true;
+      const errorOption = document.createElement('option');
+      errorOption.value = '';
+      errorOption.textContent = 'कृपया शनिवार किंवा रविवार निवडा';
+      errorOption.style.textAlign = 'center';
+      timeslotSelect.appendChild(errorOption);
+      return;
+    }
+
+    timeslotSelect.disabled = false;
+    SLOTS.forEach(slot => {
+      const opt = document.createElement('option');
+      opt.value = slot.start;
+      opt.textContent = slot.label;
+      opt.style.textAlign = 'left';
+      timeslotSelect.appendChild(opt);
+    });
+  });
+
+  // Waste input validation
   wasteInput.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9.]/g, '');
     if (this.value.includes('.')) {
@@ -220,12 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // मोबाईल नंबर व्हॅलिडेशन (फक्त 10 अंक)
-  mobileInput.addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-  });
-
-  // लोकेशन मिळवणे
+  // Get location
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
       locationField.classList.add('location-loading-placeholder');
@@ -252,12 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // QR कोड इमेजवर क्लिक
-  qrPayImg && qrPayImg.addEventListener('click', function () {
-    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
-  });
-
-  // डेटा साफ करणे
+  // Clean numeric data
   function cleanNumericData(value) {
     if (!value) return 0;
     const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
@@ -265,12 +250,12 @@ document.addEventListener('DOMContentLoaded', function () {
     return isNaN(numericValue) ? 0 : numericValue;
   }
 
-  // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
+  // Load totals data and update display
   function loadTotalsData() {
     const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
     const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/FUNDS?t=' + Date.now();
 
-    // रद्दी डेटा लोड करणे
+    // Load waste data
     fetch(DONORS_SHEET_URL)
       .then(res => {
         if (!res.ok) throw new Error(`रद्दी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
@@ -287,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
 
-        // निधी डेटा लोड करणे
+        // Load funds data
         fetch(FUNDS_SHEET_URL)
           .then(res => {
             if (!res.ok) {
@@ -324,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // फॉर्म सबमिट करणे
+  // Form submission
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     successMsg.style.display = 'none';
@@ -334,11 +319,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
-    const mobileVal = mobileInput.value;
-    const isWeekend = getWeekends().some(d => d.toISOString().split('T')[0] === dateVal);
-
-    if (!form.checkValidity() || !dateVal || !isWeekend || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0 || mobileVal.length !== 10) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. तारीख शनिवार किंवा रविवार असावी, रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे, आणि मोबाईल नंबर 10 अंकांचा असावा.';
+    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || !isWeekend(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे आणि तारीख शनिवार किंवा रविवार असावी.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -398,15 +380,18 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
-    dateInput.classList.remove('valid-date');
   });
 
-  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
+  qrPayBtn && qrPayBtn.addEventListener('click', function () {
+    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
+  });
+
+  // Typing effect function (left-to-right)
   function typeWriterEffect(element, text, callback) {
     element.textContent = '';
     element.style.textAlign = 'justify';
     let index = 0;
-    const speed = 50; // मिलिसेकंदमध्ये स्पीड
+    const speed = 50; // Speed in milliseconds
     function type() {
       if (index < text.length) {
         element.textContent += text.charAt(index);
@@ -418,74 +403,46 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     type();
   }
-
-  // CSS स्टाइल्स (मूळ स्टाइल्स + Flatpickr साठी नवीन स्टाइल्स)
-  const style = document.createElement('style');
-  style.textContent = `
-    .location-loading-placeholder::placeholder {
-      animation: blink 1s step-end infinite;
-    }
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-    #totalsDisplay {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 0 16px;
-      display: none;
-    }
-    #totalWaste, #totalFunds {
-      background: #e3fafc;
-      border: 1px solid #19aab8;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: #15626a;
-      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
-    }
-    #thankyouExitBtn {
-      display: none;
-      margin-top: 10px;
-      padding: 5px 10px;
-      border: 1px solid #000;
-      background-color: #fff;
-      cursor: pointer;
-      border-radius: 3px;
-    }
-    #thankyouMessage {
-      text-align: justify;
-    }
-    .valid-date {
-      border: 2px solid #28a745 !important;
-      background-color: #e6f4ea !important;
-    }
-    input[type="text"]#date {
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .flatpickr-day.weekend {
-      background-color: #e6f4ea !important;
-      color: #28a745 !important;
-      border: 1px solid #28a745 !important;
-    }
-    .flatpickr-day.non-weekend {
-      background-color: #f8d7da !important;
-      color: #dc3545 !important;
-      border: 1px solid #dc3545 !important;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-      background-color: #28a745 !important;
-      border-color: #28a745 !important;
-      color: #fff !important;
-    }
-  `;
-  document.head.appendChild(style);
 });
+
+// CSS styles
+const style = document.createElement('style');
+style.textContent = `
+  .location-loading-placeholder::placeholder {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  #totalsDisplay {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 0 16px;
+    display: none;
+  }
+  #totalWaste, #totalFunds {
+    background: #e3fafc;
+    border: 1px solid #19aab8;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #15626a;
+    box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+  }
+  #thankyouExitBtn {
+    display: none;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+  #thankyouMessage {
+    text-align: justify;
+  }
+`;
+document.head.appendChild(style);
