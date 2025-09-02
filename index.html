@@ -3,174 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>सामाजिक दिवाळी 2025</title>
-  <!-- Flatpickr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <!-- Flatpickr JS -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="script.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f4f4f9;
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-      color: #444;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    input[type="text"]#location {
-      width: calc(100% - 50px);
-      display: inline-block;
-    }
-    img#locBtn {
-      width: 40px;
-      height: 40px;
-      display: inline-block;
-      vertical-align: top;
-      margin-left: 10px;
-      cursor: pointer;
-    }
-    button[type="submit"] {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    button[type="submit"]:hover {
-      background-color: #218838;
-    }
-    #error, #success {
-      text-align: center;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 4px;
-    }
-    #error {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    #success {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    #thankyouMessage, #totalsDisplay {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 1.1rem;
-      color: #333;
-    }
-    #qrPayImg {
-      width: 150px;
-      height: 150px;
-      margin: 10px auto;
-      display: block;
-      cursor: pointer;
-    }
-    footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #666;
-    }
-  </style>
+  <title>सामाजिक दिवाळी 2025 - रद्दी संकलन</title>
+  <link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <script src="script.js" defer></script>
 </head>
-<body>
-  <div class="subtitle">
-    उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.<br>
-    रद्दी संकलनाचा कालावधी: 15 सप्टेंबर 2025 ते 15 ऑक्टोबर 2025 मधील सर्व शनिवार आणि रविवार.
-  </div>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-4">सामाजिक दिवाळी 2025</h1>
+    <h2 class="subtitle text-xl text-center mb-6">उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.</h2>
 
-  <div id="success" style="display: none;">
-    फॉर्म सबमिट झाला. धन्यवाद!
-  </div>
-
-  <form id="main-form">
-    <div id="error" style="display: none;">
+    <div id="success" class="hidden text-green-600 text-center mb-4">
+      फॉर्म सबमिट झाला. धन्यवाद!
+    </div>
+    <div id="error" class="hidden text-red-600 text-center mb-4">
       सर्व फिल्ड्स तपासा
     </div>
 
-    <label for="name">नाव:</label>
-    <input type="text" id="name" name="name" required>
+    <form id="main-form" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700">नाव:</label>
+        <input type="text" id="name" name="name" required class="w-full p-2 border rounded">
+      </div>
 
-    <label for="village">रद्दी संकलनासाठी गावाची निवड करा:</label>
-    <select id="village" name="village" required>
-      <option value="">-- गाव निवडा --</option>
-    </select>
+      <div class="mb-4">
+        <label for="village" class="block text-gray-700">रद्दी संकलनासाठी गावाची निवड करा:</label>
+        <select id="village" name="village" class="w-full p-2 border rounded">
+          <option value="" style="text-align: center;">-- गाव निवडा --</option>
+        </select>
+      </div>
 
-    <label for="address">पत्ता:</label>
-    <input type="text" id="address" name="address" required>
+      <div class="mb-4">
+        <label for="address" class="block text-gray-700">पत्ता:</label>
+        <textarea id="address" name="address" required class="w-full p-2 border rounded"></textarea>
+      </div>
 
-    <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
-    <div>
-      <input type="text" id="location" name="location" readonly placeholder="← आयकॉनवर टच करा">
-      <img id="locBtn" src="location.png" alt="Location Icon">
+      <div class="mb-4">
+        <label for="location" class="block text-gray-700">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
+        <div class="flex">
+          <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" readonly class="w-full p-2 border rounded">
+          <button type="button" id="locBtn" class="ml-2 p-2 bg-blue-500 text-white rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="mobilebowser" class="block text-gray-700">संपर्कासाठी मोबाईल नंबर:</label>
+        <input type="tel" id="mobilebowser" name="mobilebowser" required pattern="[0-9]{10}" class="w-full p-2 border rounded">
+      </div>
+
+      <div class="mb-4">
+        <label for="waste" class="block text-gray-700">उपक्रमासाठी उपलब्ध रद्दी (अंदाज किती किलो):</label>
+        <input type="text" id="waste" name="waste" required class="w-full p-2 border rounded">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">रद्दी संकलित करण्यासाठी तारीख व वेळ सुचवा (15 सप्टेंबर ते 15 ऑक्टोबर 2025 दरम्यान फक्त शनिवार आणि रविवार):</label>
+        <div class="flex space-x-2">
+          <input type="date" id="date" name="date" required class="w-1/2 p-2 border rounded">
+          <select id="timeslot" name="timeslot" required class="w-1/2 p-2 border rounded">
+            <option value="" style="text-align: center;">-- वेळ निवडा --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="reference" class="block text-gray-700">उपक्रमाची माहिती आपल्यापर्यंत पोहोचवणाऱ्या संयोजकाचे नाव निवडा:</label>
+        <select id="reference" name="reference" class="w-full p-2 border rounded">
+          <option value="" style="text-align: center;">-- संयोजक निवडा --</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-gray-700">आर्थिक मदत करावयाची असल्यास:</label>
+        <button type="button" id="qrPayBtn" class="p-2 bg-green-500 text-white rounded">QR कोड पेमेंट</button>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="p-2 bg-blue-600 text-white rounded">सबमिट करा</button>
+      </div>
+    </form>
+
+    <div id="thankyouMessage" class="hidden text-center mt-4">
+      रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
     </div>
 
-    <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
-    <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" required>
-
-    <label for="waste">उपक्रमासाठी उपलब्ध रद्दी (अंदाज किती किलो):</label>
-    <input type="text" id="waste" name="waste" required>
-
-    <label>रद्दी संकलित करण्यासाठी तारीख व वेळ सुचवा:</label>
-    <div>
-      <input type="text" id="date" name="date" placeholder="तारीख निवडा" required>
-      <select id="timeslot" name="timeslot" required>
-        <option value="">-- वेळ निवडा --</option>
-      </select>
+    <div id="totalsDisplay" class="hidden">
+      <div id="totalWaste" class="mb-4">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
+      <div id="totalFunds">तुमच्यासह एकूण निधी प्राप्त: 0 रु.</div>
     </div>
 
-    <label for="reference">उपक्रमाची माहिती आपल्यापर्यंत पोहोचवणाऱ्या संयोजकाचे नाव निवडा:</label>
-    <select id="reference" name="reference" required>
-    </select>
-
-    <div>
-      <label>आर्थिक मदत करावयाची असल्यास:</label>
-      <img id="qrPayImg" src="rupee icon.jpg" alt="QR Code for Payment">
+    <div class="text-center mt-4">
+      <button id="thankyouExitBtn" class="hidden">बाहेर पडा</button>
     </div>
 
-    <button type="submit">सबमिट करा</button>
-  </form>
-
-  <div id="thankyouMessage" style="display: none;">
-    रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
+    <footer class="text-center mt-8">
+      <p>© जागर फाउंडेशन | सामाजिक दिवाळी 2025</p>
+    </footer>
   </div>
-
-  <div id="totalsDisplay" style="display: none;">
-    <div id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
-    <div id="totalFunds">तुमच्यासह एकूण निधी प्राप्त: 0 रु.</div>
-  </div>
-
-  <button id="thankyouExitBtn" style="display: none;">बाहेर पडा</button>
-
-  <footer>
-    © जागर फाउंडेशन | सामाजिक दिवाळी 2025
-  </footer>
 </body>
 </html>
