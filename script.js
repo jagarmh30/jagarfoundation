@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const timeslotSelect = document.getElementById('timeslot');
   const dateInput = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
-  const qrPayBtn = document.getElementById('qrPayBtn');
+  const qrPayImg = document.getElementById('qrPayImg');
   const wasteInput = document.getElementById('waste');
+  const mobileInput = document.getElementById('mobile');
   const subtitle = document.querySelector('.subtitle');
   const totalsDisplay = document.getElementById('totalsDisplay');
   const totalWaste = document.getElementById('totalWaste');
@@ -219,6 +220,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // मोबाईल नंबर व्हॅलिडेशन (फक्त 10 अंक)
+  mobileInput.addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+  });
+
   // लोकेशन मिळवणे
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
@@ -244,6 +250,11 @@ document.addEventListener('DOMContentLoaded', function () {
       locationField.classList.remove('location-loading-placeholder');
       locationField.placeholder = '← आयकॉनवर टच करा';
     }
+  });
+
+  // QR कोड इमेजवर क्लिक
+  qrPayImg && qrPayImg.addEventListener('click', function () {
+    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
   // डेटा साफ करणे
@@ -323,10 +334,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
+    const mobileVal = mobileInput.value;
     const isWeekend = getWeekends().some(d => d.toISOString().split('T')[0] === dateVal);
 
-    if (!form.checkValidity() || !dateVal || !isWeekend || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. तारीख शनिवार किंवा रविवार असावी आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+    if (!form.checkValidity() || !dateVal || !isWeekend || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0 || mobileVal.length !== 10) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. तारीख शनिवार किंवा रविवार असावी, रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे, आणि मोबाईल नंबर 10 अंकांचा असावा.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -387,10 +399,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
     dateInput.classList.remove('valid-date');
-  });
-
-  qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
   // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
