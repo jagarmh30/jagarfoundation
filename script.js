@@ -151,7 +151,11 @@ document.addEventListener('DOMContentLoaded', function () {
     '2025-10-12'
   ];
 
-  // डेट इनपुटवर मर्यादा लावणे
+  // डेटपिकर मर्यादा सेट करणे
+  dateInput.setAttribute('min', '2025-09-20');
+  dateInput.setAttribute('max', '2025-10-12');
+
+  // डेटपिकर इनपुटवर तारीख व्हॅलिडेशन
   dateInput.addEventListener('change', function () {
     timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -164,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
       timeslotSelect.disabled = true;
       return;
     }
+
     if (!ALLOWED_DATES.includes(this.value)) {
       timeslotSelect.disabled = true;
       const errorOption = document.createElement('option');
@@ -172,8 +177,11 @@ document.addEventListener('DOMContentLoaded', function () {
       errorOption.style.textAlign = 'center';
       timeslotSelect.appendChild(errorOption);
       this.value = ''; // इनपुट रीसेट करा
+      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.';
+      errorMsg.style.display = 'block';
       return;
     }
+
     timeslotSelect.disabled = false;
     SLOTS.forEach(slot => {
       const opt = document.createElement('option');
@@ -182,9 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
       opt.style.textAlign = 'left';
       timeslotSelect.appendChild(opt);
     });
+    errorMsg.style.display = 'none';
   });
 
-  // डेट इनपुटवर डेटपिकर मर्यादा लावणे
+  // डेटपिकर इनपुटवर अतिरिक्त व्हॅलिडेशन
   dateInput.addEventListener('input', function () {
     if (this.value && !ALLOWED_DATES.includes(this.value)) {
       this.value = '';
@@ -195,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
       defaultOption.style.textAlign = 'center';
       timeslotSelect.appendChild(defaultOption);
       timeslotSelect.disabled = true;
-      alert('कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.');
+      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.';
+      errorMsg.style.display = 'block';
     }
   });
 
