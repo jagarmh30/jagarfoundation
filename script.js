@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const referenceSelect = document.getElementById('reference');
   const villageSelect = document.getElementById('village');
   const timeslotSelect = document.getElementById('timeslot');
-  const dateInput = document.getElementById('date');
+  const dateSelect = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
   const qrPayBtn = document.getElementById('qrPayBtn');
   const wasteInput = document.getElementById('waste');
@@ -141,18 +141,9 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: "04:00 PM - 06:00 PM", start: "16:00" },
     { label: "05:00 PM - 07:00 PM", start: "17:00" }
   ];
-  const ALLOWED_DATES = [
-    '2025-09-20',
-    '2025-09-21',
-    '2025-09-27',
-    '2025-09-28',
-    '2025-10-04',
-    '2025-10-11',
-    '2025-10-12'
-  ];
 
-  // डेटपिकर व्हॅलिडेशन
-  dateInput.addEventListener('change', function () {
+  // तारीख निवडल्यावर टाइमस्लॉट ड्रॉपडाउन अपडेट करणे
+  dateSelect.addEventListener('change', function () {
     timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
@@ -160,10 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
     defaultOption.style.textAlign = 'center';
     timeslotSelect.appendChild(defaultOption);
 
-    if (!this.value || !ALLOWED_DATES.includes(this.value)) {
+    if (!this.value) {
       timeslotSelect.disabled = true;
-      errorMsg.textContent = 'कृपया शनिवार किंवा रविवारची तारीख निवडा.';
-      errorMsg.style.display = 'block';
       return;
     }
 
@@ -176,23 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
       timeslotSelect.appendChild(opt);
     });
     errorMsg.style.display = 'none';
-  });
-
-  // डेटपिकर इनपुटवर अतिरिक्त तपासणी
-  dateInput.addEventListener('input', function () {
-    if (this.value && !ALLOWED_DATES.includes(this.value)) {
-      timeslotSelect.innerHTML = '';
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = '-- वेळ निवडा --';
-      defaultOption.style.textAlign = 'center';
-      timeslotSelect.appendChild(defaultOption);
-      timeslotSelect.disabled = true;
-      errorMsg.textContent = 'कृपया शनिवार किंवा रविवारची तारीख निवडा.';
-      errorMsg.style.display = 'block';
-    } else {
-      errorMsg.style.display = 'none';
-    }
   });
 
   // वेस्ट इनपुट व्हॅलिडेशन
@@ -307,10 +279,9 @@ document.addEventListener('DOMContentLoaded', function () {
     thankyouMessage.style.display = 'none';
     totalsDisplay.style.display = 'none';
 
-    const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
-    if (!form.checkValidity() || !dateVal || !ALLOWED_DATES.includes(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया शनिवार किंवा रविवारची तारीख निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+    if (!form.checkValidity() || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -319,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const formData = new FormData(form);
     const data = {};
     formData.forEach((value, key) => { data[key] = value; });
-    data.date = dateInput.value || "";
+    data.date = dateSelect.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
