@@ -151,11 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
     '2025-10-12'
   ];
 
-  // डेटपिकर मर्यादा सेट करणे
-  dateInput.setAttribute('min', '2025-09-20');
-  dateInput.setAttribute('max', '2025-10-12');
-
-  // डेटपिकर इनपुटवर तारीख व्हॅलिडेशन
+  // डेटपिकर व्हॅलिडेशन
   dateInput.addEventListener('change', function () {
     timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -164,20 +160,10 @@ document.addEventListener('DOMContentLoaded', function () {
     defaultOption.style.textAlign = 'center';
     timeslotSelect.appendChild(defaultOption);
 
-    if (!this.value) {
+    if (!this.value || !ALLOWED_DATES.includes(this.value)) {
       timeslotSelect.disabled = true;
-      return;
-    }
-
-    if (!ALLOWED_DATES.includes(this.value)) {
-      timeslotSelect.disabled = true;
-      const errorOption = document.createElement('option');
-      errorOption.value = '';
-      errorOption.textContent = 'कृपया 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर निवडा';
-      errorOption.style.textAlign = 'center';
-      timeslotSelect.appendChild(errorOption);
-      this.value = ''; // इनपुट रीसेट करा
-      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.';
+      this.value = '';
+      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -193,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
     errorMsg.style.display = 'none';
   });
 
-  // डेटपिकर इनपुटवर अतिरिक्त व्हॅलिडेशन
+  // डेटपिकर इनपुटवर अतिरिक्त तपासणी
   dateInput.addEventListener('input', function () {
     if (this.value && !ALLOWED_DATES.includes(this.value)) {
       this.value = '';
@@ -204,8 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
       defaultOption.style.textAlign = 'center';
       timeslotSelect.appendChild(defaultOption);
       timeslotSelect.disabled = true;
-      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.';
+      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा.';
       errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
     }
   });
 
@@ -324,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
     if (!form.checkValidity() || !dateVal || !ALLOWED_DATES.includes(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -407,46 +395,46 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     type();
   }
-});
 
-// CSS स्टाइल्स
-const style = document.createElement('style');
-style.textContent = `
-  .location-loading-placeholder::placeholder {
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-  #totalsDisplay {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 0 16px;
-    display: none;
-  }
-  #totalWaste, #totalFunds {
-    background: #e3fafc;
-    border: 1px solid #19aab8;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #15626a;
-    box-shadow: 0 2px 8px rgba(0,0,60,0.1);
-  }
-  #thankyouExitBtn {
-    display: none;
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: 1px solid #000;
-    background-color: #fff;
-    cursor: pointer;
-    border-radius: 3px;
-  }
-  #thankyouMessage {
-    text-align: justify;
-  }
-`;
-document.head.appendChild(style);
+  // CSS स्टाइल्स
+  const style = document.createElement('style');
+  style.textContent = `
+    .location-loading-placeholder::placeholder {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    #totalsDisplay {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: none;
+    }
+    #totalWaste, #totalFunds {
+      background: #e3fafc;
+      border: 1px solid #19aab8;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #15626a;
+      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+    }
+    #thankyouExitBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border: 1px solid #000;
+      background-color: #fff;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    #thankyouMessage {
+      text-align: justify;
+    }
+  `;
+  document.head.appendChild(style);
+});
