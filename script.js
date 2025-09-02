@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const totalWaste = document.getElementById('totalWaste');
   const totalFunds = document.getElementById('totalFunds');
 
-  // Disable right-click and drag on images
+  // इमेजेसवर उजव्या क्लिक आणि ड्रॅग अक्षम करणे
   const images = document.querySelectorAll('img');
   images.forEach(img => {
     img.addEventListener('contextmenu', (e) => e.preventDefault());
     img.addEventListener('dragstart', (e) => e.preventDefault());
   });
 
-  // Load convener and village data
+  // संयोजक आणि गाव डेटा लोड करणे
   const SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Conveners?t=' + Date.now();
 
   fetch(SHEET_URL)
@@ -51,11 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
 
-      // Sort villages (Marathi collation)
+      // गाव सॉर्ट करणे (मराठी क्रमवारी)
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
       villages.sort((a, b) => collator.compare(a, b));
 
-      // Sort conveners for each village
+      // प्रत्येक गावातील संयोजक सॉर्ट करणे
       for (let village in convenersByVillage) {
         convenersByVillage[village].sort((a, b) => collator.compare(a, b));
       }
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('गावांची यादी:', villages);
       console.log('गावानुसार संयोजक:', convenersByVillage);
 
-      // Populate village dropdown
+      // गाव ड्रॉपडाउन भरा
       villageSelect.innerHTML = '';
       const defaultVillageOption = document.createElement('option');
       defaultVillageOption.value = '';
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', function () {
         villageSelect.appendChild(opt);
       });
 
-      // Populate convener dropdown (initially all)
+      // संयोजक ड्रॉपडाउन भरा (सुरुवातीला सर्व)
       updateConveners(convenersByVillage);
 
-      // Update conveners when village changes
+      // गाव बदलल्यावर संयोजक अपडेट
       villageSelect.addEventListener('change', function () {
         const selectedVillage = this.value;
         updateConveners(convenersByVillage, selectedVillage);
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
       errorMsg.style.display = 'block';
     });
 
-  // Update convener dropdown function
+  // संयोजक ड्रॉपडाउन अपडेट फंक्शन
   function updateConveners(convenersByVillage, selectedVillage = null) {
     referenceSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
       allConveners.sort((a, b) => collator.compare(a, b));
     }
 
-    // Add all conveners
+    // सर्व संयोजक जोडा
     allConveners.forEach(name => {
       const opt = document.createElement('option');
       opt.value = name;
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
       referenceSelect.appendChild(opt);
     });
 
-    // Add "None of the above" option
+    // शेवटचे नाव "यापैकी कोणीही नाही (अन्य मार्ग)" म्हणून स्वतंत्रपणे जोडा
     const lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)";
     const lastOpt = document.createElement('option');
     lastOpt.value = lastOption;
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
     referenceSelect.appendChild(lastOpt);
   }
 
-  // Date and timeslot selection
+  // तारीख व वेळेचा स्लॉट निवडणे
   const SLOTS = [
     { label: "08:00 AM - 10:00 AM", start: "08:00" },
     { label: "10:00 AM - 12:00 PM", start: "10:00" },
@@ -146,31 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
   dateInput.setAttribute('min', minDate);
   dateInput.setAttribute('max', maxDate);
 
-  // Function to check if a date is a weekend (Saturday or Sunday)
-  function isWeekend(dateStr) {
-    const date = new Date(dateStr);
-    const day = date.getDay();
-    return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
-  }
-
-  // Function to get all weekend dates between minDate and maxDate
-  function getWeekendDates(startDate, endDate) {
-    const weekends = [];
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    let current = new Date(start);
-
-    while (current <= end) {
-      if (isWeekend(current)) {
-        const formattedDate = current.toISOString().split('T')[0];
-        weekends.push(formattedDate);
-      }
-      current.setDate(current.getDate() + 1);
-    }
-    return weekends;
-  }
-
-  // Populate timeslot dropdown based on date selection
   dateInput.addEventListener('change', function () {
     timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -179,22 +154,19 @@ document.addEventListener('DOMContentLoaded', function () {
     defaultOption.style.textAlign = 'center';
     timeslotSelect.appendChild(defaultOption);
 
-    const selectedDate = this.value;
-    if (!selectedDate) {
+    if (!this.value) {
       timeslotSelect.disabled = true;
       return;
     }
-
-    if (selectedDate < minDate || selectedDate > maxDate || !isWeekend(selectedDate)) {
+    if (this.value < minDate || this.value > maxDate) {
       timeslotSelect.disabled = true;
       const errorOption = document.createElement('option');
       errorOption.value = '';
-      errorOption.textContent = 'कृपया शनिवार किंवा रविवार निवडा';
+      errorOption.textContent = 'तारीख योग्य नाही';
       errorOption.style.textAlign = 'center';
       timeslotSelect.appendChild(errorOption);
       return;
     }
-
     timeslotSelect.disabled = false;
     SLOTS.forEach(slot => {
       const opt = document.createElement('option');
@@ -205,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Waste input validation
+  // वेस्ट इनपुट व्हॅलिडेशन
   wasteInput.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9.]/g, '');
     if (this.value.includes('.')) {
@@ -215,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Get location
+  // लोकेशन मिळवणे
   locBtn.addEventListener('click', () => {
     if (navigator.geolocation) {
       locationField.classList.add('location-loading-placeholder');
@@ -242,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Clean numeric data
+  // डेटा साफ करणे
   function cleanNumericData(value) {
     if (!value) return 0;
     const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
@@ -250,12 +222,12 @@ document.addEventListener('DOMContentLoaded', function () {
     return isNaN(numericValue) ? 0 : numericValue;
   }
 
-  // Load totals data and update display
+  // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
   function loadTotalsData() {
     const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
     const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/FUNDS?t=' + Date.now();
 
-    // Load waste data
+    // रद्दी डेटा लोड करणे
     fetch(DONORS_SHEET_URL)
       .then(res => {
         if (!res.ok) throw new Error(`रद्दी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
@@ -272,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
 
-        // Load funds data
+        // निधी डेटा लोड करणे
         fetch(FUNDS_SHEET_URL)
           .then(res => {
             if (!res.ok) {
@@ -309,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-  // Form submission
+  // फॉर्म सबमिट करणे
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     successMsg.style.display = 'none';
@@ -319,8 +291,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
-    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || !isWeekend(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे आणि तारीख शनिवार किंवा रविवार असावी.';
+    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -386,12 +358,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
-  // Typing effect function (left-to-right)
+  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
   function typeWriterEffect(element, text, callback) {
     element.textContent = '';
     element.style.textAlign = 'justify';
     let index = 0;
-    const speed = 50; // Speed in milliseconds
+    const speed = 50; // मिलिसेकंदमध्ये स्पीड
     function type() {
       if (index < text.length) {
         element.textContent += text.charAt(index);
@@ -405,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// CSS styles
+// CSS स्टाइल्स
 const style = document.createElement('style');
 style.textContent = `
   .location-loading-placeholder::placeholder {
