@@ -132,6 +132,74 @@ document.addEventListener('DOMContentLoaded', function () {
     referenceSelect.appendChild(lastOpt);
   }
 
+  // शनिवार आणि रविवारच्या तारखा मिळवणे
+  function getWeekends() {
+    const weekends = [];
+    const startDate = new Date('2025-09-15');
+    const endDate = new Date('2025-10-15');
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      if (currentDate.getDay() === 0 || currentDate.getDay() === 6) { // रविवार (0) किंवा शनिवार (6)
+        weekends.push(new Date(currentDate));
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return weekends;
+  }
+
+  // Flatpickr इनिशियलाइझ करणे
+  flatpickr(dateInput, {
+    minDate: '2025-09-15',
+    maxDate: '2025-10-15',
+    enable: getWeekends(),
+    dateFormat: 'Y-m-d',
+    locale: {
+      firstDayOfWeek: 1, // सोमवारपासून आठवडा सुरू होतो
+      weekdays: {
+        shorthand: ['रवि', 'सोम', 'मंगळ', 'बुध', 'गुरु', 'शुक्र', 'शनि'],
+        longhand: ['रविवार', 'सोमवार', 'मंगळवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार']
+      },
+      months: {
+        shorthand: ['जाने', 'फेब', 'मार्च', 'एप्रिल', 'मे', 'जून', 'जुलै', 'ऑग', 'सप्टे', 'ऑक्टो', 'नोव्हे', 'डिसे'],
+        longhand: ['जानेवारी', 'फेब्रुवारी', 'मार्च', 'एप्रिल', 'मे', 'जून', 'जुलै', 'ऑगस्ट', 'सप्टेंबर', 'ऑक्टोबर', 'नोव्हेंबर', 'डिसेंबर']
+      }
+    },
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      const date = new Date(dayElem.dateObj);
+      if (date.getDay() === 0 || date.getDay() === 6) {
+        dayElem.classList.add('weekend');
+      } else {
+        dayElem.classList.add('non-weekend');
+      }
+    },
+    onChange: function(selectedDates, dateStr, instance) {
+      timeslotSelect.innerHTML = '';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- वेळ निवडा --';
+      defaultOption.style.textAlign = 'center';
+      timeslotSelect.appendChild(defaultOption);
+
+      if (!dateStr) {
+        timeslotSelect.disabled = true;
+        dateInput.classList.remove('valid-date', 'invalid-date');
+        return;
+      }
+
+      timeslotSelect.disabled = false;
+      dateInput.classList.remove('invalid-date');
+      dateInput.classList.add('valid-date');
+      SLOTS.forEach(slot => {
+        const opt = document.createElement('option');
+        opt.value = slot.start;
+        opt.textContent = slot.label;
+        opt.style.textAlign = 'left';
+        timeslotSelect.appendChild(opt);
+      });
+    }
+  });
+
   // तारीख व वेळेचा स्लॉट निवडणे
   const SLOTS = [
     { label: "08:00 AM - 10:00 AM", start: "08:00" },
@@ -141,41 +209,6 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: "04:00 PM - 06:00 PM", start: "16:00" },
     { label: "05:00 PM - 07:00 PM", start: "17:00" }
   ];
-  const minDate = '2025-09-15';
-  const maxDate = '2025-10-15';
-  dateInput.setAttribute('min', minDate);
-  dateInput.setAttribute('max', maxDate);
-
-  dateInput.addEventListener('change', function () {
-    timeslotSelect.innerHTML = '';
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- वेळ निवडा --';
-    defaultOption.style.textAlign = 'center';
-    timeslotSelect.appendChild(defaultOption);
-
-    if (!this.value) {
-      timeslotSelect.disabled = true;
-      return;
-    }
-    if (this.value < minDate || this.value > maxDate) {
-      timeslotSelect.disabled = true;
-      const errorOption = document.createElement('option');
-      errorOption.value = '';
-      errorOption.textContent = 'तारीख योग्य नाही';
-      errorOption.style.textAlign = 'center';
-      timeslotSelect.appendChild(errorOption);
-      return;
-    }
-    timeslotSelect.disabled = false;
-    SLOTS.forEach(slot => {
-      const opt = document.createElement('option');
-      opt.value = slot.start;
-      opt.textContent = slot.label;
-      opt.style.textAlign = 'left';
-      timeslotSelect.appendChild(opt);
-    });
-  });
 
   // वेस्ट इनपुट व्हॅलिडेशन
   wasteInput.addEventListener('input', function () {
@@ -291,8 +324,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
-    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+    const isWeekend = getWeekends().some(d => d.toISOString().split('T')[0] === dateVal);
+
+    if (!form.checkValidity() || !dateVal || !isWeekend || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. तारीख शनिवार किंवा रविवार असावी आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -352,6 +387,7 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
+    dateInput.classList.remove('valid-date', 'invalid-date');
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
@@ -375,46 +411,77 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     type();
   }
-});
 
-// CSS स्टाइल्स
-const style = document.createElement('style');
-style.textContent = `
-  .location-loading-placeholder::placeholder {
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
-  #totalsDisplay {
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 0 16px;
-    display: none;
-  }
-  #totalWaste, #totalFunds {
-    background: #e3fafc;
-    border: 1px solid #19aab8;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #15626a;
-    box-shadow: 0 2px 8px rgba(0,0,60,0.1);
-  }
-  #thankyouExitBtn {
-    display: none;
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: 1px solid #000;
-    background-color: #fff;
-    cursor: pointer;
-    border-radius: 3px;
-  }
-  #thankyouMessage {
-    text-align: justify;
-  }
-`;
-document.head.appendChild(style);
+  // CSS स्टाइल्स
+  const style = document.createElement('style');
+  style.textContent = `
+    .location-loading-placeholder::placeholder {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    #totalsDisplay {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: none;
+    }
+    #totalWaste, #totalFunds {
+      background: #e3fafc;
+      border: 1px solid #19aab8;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #15626a;
+      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+    }
+    #thankyouExitBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border: 1px solid #000;
+      background-color: #fff;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    #thankyouMessage {
+      text-align: justify;
+    }
+    .valid-date {
+      border: 2px solid #28a745 !important;
+      background-color: #e6f4ea !important;
+    }
+    .invalid-date {
+      border: 2px solid #dc3545 !important;
+      background-color: #f8d7da !important;
+    }
+    input[type="text"]#date {
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 200px;
+    }
+    .flatpickr-day.weekend {
+      background-color: #e6f4ea !important;
+      color: #28a745 !important;
+      border: 1px solid #28a745 !important;
+    }
+    .flatpickr-day.non-weekend {
+      background-color: #f8d7da !important;
+      color: #dc3545 !important;
+      border: 1px solid #dc3545 !important;
+      pointer-events: none; /* अवैध तारखा निवडता येणार नाहीत */
+      opacity: 0.6;
+    }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+      background-color: #28a745 !important;
+      border-color: #28a745 !important;
+      color: #fff !important;
+    }
+  `;
+  document.head.appendChild(style);
+});
