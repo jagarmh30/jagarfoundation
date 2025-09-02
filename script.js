@@ -162,8 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!this.value || !ALLOWED_DATES.includes(this.value)) {
       timeslotSelect.disabled = true;
-      this.value = '';
-      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा.';
+      errorMsg.textContent = 'कृपया शनिवार किंवा रविवारची तारीख निवडा.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -182,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // डेटपिकर इनपुटवर अतिरिक्त तपासणी
   dateInput.addEventListener('input', function () {
     if (this.value && !ALLOWED_DATES.includes(this.value)) {
-      this.value = '';
       timeslotSelect.innerHTML = '';
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
@@ -190,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
       defaultOption.style.textAlign = 'center';
       timeslotSelect.appendChild(defaultOption);
       timeslotSelect.disabled = true;
-      errorMsg.textContent = 'कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा.';
+      errorMsg.textContent = 'कृपया शनिवार किंवा रविवारची तारीख निवडा.';
       errorMsg.style.display = 'block';
     } else {
       errorMsg.style.display = 'none';
@@ -312,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
     if (!form.checkValidity() || !dateVal || !ALLOWED_DATES.includes(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर 2025 निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया शनिवार किंवा रविवारची तारीख निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
