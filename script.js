@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('निधी मूल्ये (साफ केलेले):', fundValues);
             const totalFundsAmount = fundValues.reduce((sum, item) => sum + item.fund, 0);
             console.log('एकूण निधी:', totalFundsAmount);
-            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
+            totalFunds.textContent = `एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
             if (totalFundsAmount === 0) {
               console.warn('निधी डेटा रिक्त किंवा अवैध आहे. शीट ॲक्सेस किंवा डेटा तपासा.');
             }
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
       .catch(err => {
         console.error('रद्दी डेटा लोड करताना त्रुटी:', err);
         totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: 0 किलो`;
-        totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
+        totalFunds.textContent = `एकूण प्राप्त निधी: 0 रु.`;
         totalsDisplay.style.display = 'block';
       });
   }
@@ -407,3 +407,4 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
