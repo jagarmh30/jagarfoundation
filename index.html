@@ -75,7 +75,7 @@
       letter-spacing: 0.2px;
       color: #000000;
     }
-    input[type="text"], input[type="tel"], input[type="number"], textarea, select, input[type="date"] {
+    input[type="text"], input[type="tel"], input[type="number"], textarea, select {
       width: 100%;
       font-size: 1rem;
       padding: 7px 8px;
@@ -133,13 +133,6 @@
       margin: 0 0 4px 0;
       text-align: center;
       display: none;
-      animation: fadeInOut 3s ease-in-out forwards;
-    }
-    @keyframes fadeInOut {
-      0% { opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { opacity: 0; display: none; }
     }
     .success {
       color: #097c00;
@@ -288,7 +281,7 @@
       max-width: 48%;
       text-align: left;
     }
-    .date-row-fields select, .date-row-fields input[type="date"] {
+    .date-row-fields select {
       max-width: 100%;
       text-align: left;
     }
@@ -303,7 +296,7 @@
         min-width: 90px;
         max-width: 48%;
       }
-      .date-row-fields select, .date-row-fields input[type="date"] {
+      .date-row-fields select {
         max-width: 100%;
       }
     }
@@ -401,7 +394,16 @@
       </div>
       <div class="date-row-fields">
         <div>
-          <input type="date" id="date" name="date" min="2025-09-15" max="2025-10-15" required>
+          <select id="date" name="date" required>
+            <option value="" style="text-align: center;">-- तारीख निवडा --</option>
+            <option value="2025-09-20">20 सप्टेंबर 2025 (शनिवार)</option>
+            <option value="2025-09-21">21 सप्टेंबर 2025 (रविवार)</option>
+            <option value="2025-09-27">27 सप्टेंबर 2025 (शनिवार)</option>
+            <option value="2025-09-28">28 सप्टेंबर 2025 (रविवार)</option>
+            <option value="2025-10-04">4 ऑक्टोबर 2025 (शनिवार)</option>
+            <option value="2025-10-11">11 ऑक्टोबर 2025 (शनिवार)</option>
+            <option value="2025-10-12">12 ऑक्टोबर 2025 (रविवार)</option>
+          </select>
         </div>
         <div>
           <select id="timeslot" name="timeslot"></select>
