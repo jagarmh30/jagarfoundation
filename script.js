@@ -141,11 +141,17 @@ document.addEventListener('DOMContentLoaded', function () {
     { label: "04:00 PM - 06:00 PM", start: "16:00" },
     { label: "05:00 PM - 07:00 PM", start: "17:00" }
   ];
-  const minDate = '2025-09-15';
-  const maxDate = '2025-10-15';
-  dateInput.setAttribute('min', minDate);
-  dateInput.setAttribute('max', maxDate);
+  const ALLOWED_DATES = [
+    '2025-09-20',
+    '2025-09-21',
+    '2025-09-27',
+    '2025-09-28',
+    '2025-10-04',
+    '2025-10-11',
+    '2025-10-12'
+  ];
 
+  // डेट इनपुटवर मर्यादा लावणे
   dateInput.addEventListener('change', function () {
     timeslotSelect.innerHTML = '';
     const defaultOption = document.createElement('option');
@@ -158,13 +164,14 @@ document.addEventListener('DOMContentLoaded', function () {
       timeslotSelect.disabled = true;
       return;
     }
-    if (this.value < minDate || this.value > maxDate) {
+    if (!ALLOWED_DATES.includes(this.value)) {
       timeslotSelect.disabled = true;
       const errorOption = document.createElement('option');
       errorOption.value = '';
-      errorOption.textContent = 'तारीख योग्य नाही';
+      errorOption.textContent = 'कृपया 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर निवडा';
       errorOption.style.textAlign = 'center';
       timeslotSelect.appendChild(errorOption);
+      this.value = ''; // इनपुट रीसेट करा
       return;
     }
     timeslotSelect.disabled = false;
@@ -175,6 +182,21 @@ document.addEventListener('DOMContentLoaded', function () {
       opt.style.textAlign = 'left';
       timeslotSelect.appendChild(opt);
     });
+  });
+
+  // डेट इनपुटवर डेटपिकर मर्यादा लावणे
+  dateInput.addEventListener('input', function () {
+    if (this.value && !ALLOWED_DATES.includes(this.value)) {
+      this.value = '';
+      timeslotSelect.innerHTML = '';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- वेळ निवडा --';
+      defaultOption.style.textAlign = 'center';
+      timeslotSelect.appendChild(defaultOption);
+      timeslotSelect.disabled = true;
+      alert('कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा.');
+    }
   });
 
   // वेस्ट इनपुट व्हॅलिडेशन
@@ -291,8 +313,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const dateVal = dateInput.value;
     const wasteVal = wasteInput.value;
-    if (!form.checkValidity() || !dateVal || dateVal < minDate || dateVal > maxDate || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
-      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+    if (!form.checkValidity() || !dateVal || !ALLOWED_DATES.includes(dateVal) || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. कृपया फक्त 20, 21, 27, 28 सप्टेंबर किंवा 4, 11, 12 ऑक्टोबर या तारखा निवडा आणि रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
       errorMsg.style.display = 'block';
       return;
     }
