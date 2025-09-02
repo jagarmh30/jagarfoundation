@@ -183,12 +183,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (!dateStr) {
         timeslotSelect.disabled = true;
-        dateInput.classList.remove('valid-date', 'invalid-date');
+        dateInput.classList.remove('valid-date');
         return;
       }
 
       timeslotSelect.disabled = false;
-      dateInput.classList.remove('invalid-date');
       dateInput.classList.add('valid-date');
       SLOTS.forEach(slot => {
         const opt = document.createElement('option');
@@ -387,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
-    dateInput.classList.remove('valid-date', 'invalid-date');
+    dateInput.classList.remove('valid-date');
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
@@ -412,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function () {
     type();
   }
 
-  // CSS स्टाइल्स
+  // CSS स्टाइल्स (मूळ स्टाइल्स + Flatpickr साठी नवीन स्टाइल्स)
   const style = document.createElement('style');
   style.textContent = `
     .location-loading-placeholder::placeholder {
@@ -455,15 +454,12 @@ document.addEventListener('DOMContentLoaded', function () {
       border: 2px solid #28a745 !important;
       background-color: #e6f4ea !important;
     }
-    .invalid-date {
-      border: 2px solid #dc3545 !important;
-      background-color: #f8d7da !important;
-    }
     input[type="text"]#date {
-      padding: 5px;
+      padding: 10px;
       border-radius: 4px;
       border: 1px solid #ccc;
-      width: 200px;
+      width: 100%;
+      box-sizing: border-box;
     }
     .flatpickr-day.weekend {
       background-color: #e6f4ea !important;
@@ -474,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function () {
       background-color: #f8d7da !important;
       color: #dc3545 !important;
       border: 1px solid #dc3545 !important;
-      pointer-events: none; /* अवैध तारखा निवडता येणार नाहीत */
+      pointer-events: none;
       opacity: 0.6;
     }
     .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
