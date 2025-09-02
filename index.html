@@ -47,21 +47,22 @@
       width: calc(100% - 50px);
       display: inline-block;
     }
-    button#locBtn {
+    img#locBtn {
       width: 40px;
+      height: 40px;
       display: inline-block;
       vertical-align: top;
       margin-left: 10px;
-      padding: 10px;
+      cursor: pointer;
     }
-    button[type="submit"], #qrPayBtn {
+    button[type="submit"] {
       background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
       font-size: 1rem;
     }
-    button[type="submit"]:hover, #qrPayBtn:hover {
+    button[type="submit"]:hover {
       background-color: #218838;
     }
     #error, #success {
@@ -83,6 +84,13 @@
       margin-top: 20px;
       font-size: 1.1rem;
       color: #333;
+    }
+    #qrPayImg {
+      width: 150px;
+      height: 150px;
+      margin: 10px auto;
+      display: block;
+      cursor: pointer;
     }
     footer {
       text-align: center;
@@ -121,7 +129,7 @@
     <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
     <div>
       <input type="text" id="location" name="location" readonly placeholder="← आयकॉनवर टच करा">
-      <button type="button" id="locBtn">📍</button>
+      <img id="locBtn" src="location.png" alt="Location Icon">
     </div>
 
     <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
@@ -144,7 +152,7 @@
 
     <div>
       <label>आर्थिक मदत करावयाची असल्यास:</label>
-      <button type="button" id="qrPayBtn">QR कोडद्वारे पेमेंट</button>
+      <img id="qrPayImg" src="rupee icon.jpg" alt="QR Code for Payment">
     </div>
 
     <button type="submit">सबमिट करा</button>
