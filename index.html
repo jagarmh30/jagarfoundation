@@ -281,10 +281,6 @@
       max-width: 48%;
       text-align: left;
     }
-    .date-row-fields input[type="date"] {
-      max-width: 100%;
-      padding: 6px 2px;
-    }
     .date-row-fields select {
       max-width: 100%;
       text-align: left;
@@ -300,10 +296,7 @@
         min-width: 90px;
         max-width: 48%;
       }
-      .date-row-fields input[type="date"] {
-        max-width: 100%;
-      }
-      .date-row-fields select {
+      .date-row-fields select, .date-row-fields input[type="date"] {
         max-width: 100%;
       }
     }
@@ -401,7 +394,7 @@
       </div>
       <div class="date-row-fields">
         <div>
-          <input type="date" id="date" name="date" required>
+          <input type="date" id="date" name="date" min="2025-09-15" max="2025-10-15" required>
         </div>
         <div>
           <select id="timeslot" name="timeslot"></select>
@@ -436,8 +429,5 @@
     © जागर फाउंडेशन | सामाजिक दिवाळी 2025
   </footer>
   <script src="script.js"></script>
-
-
-
-
-
+</body>
+</html>
