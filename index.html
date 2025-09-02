@@ -9,6 +9,88 @@
   <!-- Flatpickr JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="script.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #444;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type="text"]#location {
+      width: calc(100% - 50px);
+      display: inline-block;
+    }
+    button#locBtn {
+      width: 40px;
+      display: inline-block;
+      vertical-align: top;
+      margin-left: 10px;
+      padding: 10px;
+    }
+    button[type="submit"], #qrPayBtn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button[type="submit"]:hover, #qrPayBtn:hover {
+      background-color: #218838;
+    }
+    #error, #success {
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+    #error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    #success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    #thankyouMessage, #totalsDisplay {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
   <div class="subtitle">
