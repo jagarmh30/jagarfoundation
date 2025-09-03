@@ -221,8 +221,8 @@
     }
     .location-group {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column; /* Changed to column for separate lines */
+      gap: 4px; /* Small gap between label and input row */
       margin-bottom: 7px;
       max-width: 410px;
       box-sizing: border-box;
@@ -237,16 +237,18 @@
       display: flex;
       gap: 6px;
       align-items: center;
-      max-width: 246px; /* Adjusted to fit within form's inner width with label */
+      width: 100%; /* Full width within the form */
+      max-width: 362px; /* Match form's inner width */
       box-sizing: border-box;
-      flex: 1;
     }
     .location-row input {
       flex: 1;
-      height: 50px;
+      height: 50px; /* Matches location-icon-btn height */
       font-size: 1rem;
       width: calc(100% - 56px); /* 50px button + 6px gap */
-      max-width: 190px; /* Adjusted to align with other inputs */
+      max-width: 306px; /* Adjusted to align with other inputs */
+      line-height: 50px; /* Ensures text is vertically centered */
+      padding: 0 8px; /* Adjusted padding to maintain visual alignment */
     }
     .location-icon-btn {
       background: none;
@@ -316,6 +318,8 @@
       .location-row input {
         max-width: 306px; /* Match previous alignment */
         width: calc(100% - 56px);
+        height: 50px; /* Consistent height on mobile */
+        padding: 0 8px;
       }
       .date-row-fields {
         flex-direction: row;
