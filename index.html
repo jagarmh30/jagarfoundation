@@ -224,7 +224,7 @@
       gap: 6px;
       align-items: center;
       margin-bottom: 7px;
-      max-width: 410px;
+      max-width: 362px; /* Match form's inner width (410px - 24px padding - 24px padding) */
       box-sizing: border-box;
     }
     .location-row input {
@@ -232,6 +232,7 @@
       height: 50px;
       font-size: 1rem;
       width: calc(100% - 56px); /* 50px button + 6px gap */
+      max-width: 306px; /* Ensure input width aligns with other inputs (362px - 56px) */
     }
     .location-icon-btn {
       background: none;
