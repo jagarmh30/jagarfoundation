@@ -224,11 +224,14 @@
       gap: 6px;
       align-items: center;
       margin-bottom: 7px;
+      max-width: 410px;
+      box-sizing: border-box;
     }
     .location-row input {
       flex: 1;
       height: 50px;
       font-size: 1rem;
+      width: calc(100% - 56px); /* 50px button + 6px gap */
     }
     .location-icon-btn {
       background: none;
@@ -440,4 +443,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
