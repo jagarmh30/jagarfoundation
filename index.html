@@ -219,20 +219,34 @@
       background: #15626a;
       color: #fff;
     }
+    .location-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+      max-width: 410px;
+      box-sizing: border-box;
+    }
+    .location-group label {
+      margin: 0;
+      font-size: 1rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
     .location-row {
       display: flex;
       gap: 6px;
       align-items: center;
-      margin-bottom: 7px;
-      max-width: 362px; /* Match form's inner width (410px - 24px padding - 24px padding) */
+      max-width: 246px; /* Adjusted to fit within form's inner width with label */
       box-sizing: border-box;
+      flex: 1;
     }
     .location-row input {
       flex: 1;
       height: 50px;
       font-size: 1rem;
       width: calc(100% - 56px); /* 50px button + 6px gap */
-      max-width: 306px; /* Ensure input width aligns with other inputs (362px - 56px) */
+      max-width: 190px; /* Adjusted to align with other inputs */
     }
     .location-icon-btn {
       background: none;
@@ -290,6 +304,19 @@
       text-align: left;
     }
     @media (max-width: 600px) {
+      .location-group {
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 100%;
+      }
+      .location-row {
+        max-width: 362px; /* Match form's inner width */
+        width: 100%;
+      }
+      .location-row input {
+        max-width: 306px; /* Match previous alignment */
+        width: calc(100% - 56px);
+      }
       .date-row-fields {
         flex-direction: row;
         gap: 8px;
@@ -378,12 +405,14 @@
     <label for="address">तुमचा सविस्तर पत्ता लिहा:</label>
     <textarea id="address" name="address" rows="2" placeholder="(गांव/रोड/बिल्डिंग)" required></textarea>
 
-    <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
-    <div class="location-row">
-      <button type="button" id="locBtn" class="location-icon-btn" title="लोकेशन मिळवा" aria-label="लोकेशन मिळवा">
-        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन" draggable="false">
-      </button>
-      <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" autocomplete="off" readonly>
+    <div class="location-group">
+      <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
+      <div class="location-row">
+        <button type="button" id="locBtn" class="location-icon-btn" title="लोकेशन मिळवा" aria-label="लोकेशन मिळवा">
+          <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/location.png" alt="लोकेशन आयकॉन" draggable="false">
+        </button>
+        <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" autocomplete="off" readonly>
+      </div>
     </div>
 
     <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
