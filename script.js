@@ -43,12 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const fullName = (row['संयोजकाचे नाव'] || '').toString().trim();
         const mobile = (row['मोबाईल नंबर'] || '').toString().trim();
 
-        if (village && fullName && mobile) {
+        // मोबाईल नंबर 10 अंकी आहे का तपासा (आंतरराष्ट्रीय कोड समाविष्ट)
+        const mobileNum = mobile.replace(/[^0-9]/g, '');
+        if (village && fullName && mobileNum.length === 10) {
           if (!convenersByVillage[village]) {
             convenersByVillage[village] = [];
             villages.push(village);
           }
-          convenersByVillage[village].push({ name: fullName, mobile: mobile });
+          convenersByVillage[village].push({ name: fullName, mobile: mobileNum });
+        } else {
+          console.warn(`अवैध डेटा: गाव=${village}, नाव=${fullName}, मोबाईल=${mobile}, लांबी=${mobileNum.length}`);
         }
       });
 
@@ -296,20 +300,40 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // संयोजकाचे नाव आणि मोबाईल नंबर वेगळे करणे
     let referenceData = { name: '', mobile: '' };
-    if (data.reference) {
-      try {
-        referenceData = JSON.parse(data.reference);
-        console.log('Parsed Reference Data:', referenceData); // डीबगिंगसाठी
-      } catch (e) {
-        console.error('Reference डेटा पर्सिंग त्रुटी:', e);
-        errorMsg.textContent = 'संयोजक डेटा पर्सिंगमध्ये त्रुटी. कृपया पुन्हा प्रयत्न करा.';
+    if (!data.reference) {
+      errorMsg.textContent = 'कृपया संयोजक निवडा.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    try {
+      referenceData = JSON.parse(data.reference);
+      console.log('Parsed Reference Data:', JSON.stringify(referenceData, null, 2)); // तपशीलवार लॉगिंग
+      if (!referenceData.name) {
+        errorMsg.textContent = 'संयोजकाचे नाव रिकामे आहे. कृपया पुन्हा प्रयत्न करा.';
         errorMsg.style.display = 'block';
         return;
       }
+      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && !referenceData.mobile) {
+        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर रिकामा आहे. कृपया वैध संयोजक निवडा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      // मोबाईल नंबर 10 अंकी आहे का तपासा
+      const mobileNum = referenceData.mobile.replace(/[^0-9]/g, '');
+      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && mobileNum.length !== 10) {
+        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर अवैध आहे. कृपया वैध 10 अंकी नंबर असलेला संयोजक निवडा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+    } catch (e) {
+      console.error('Reference डेटा पर्सिंग त्रुटी:', e);
+      errorMsg.textContent = 'संयोजक डेटा पर्सिंगमध्ये त्रुटी. कृपया पुन्हा प्रयत्न करा.';
+      errorMsg.style.display = 'block';
+      return;
     }
     data.referenceName = referenceData.name || '';
     data.referenceMobile = referenceData.mobile || '';
-    console.log('Form Data to send:', data); // डीबगिंगसाठी
+    console.log('Form Data to send:', JSON.stringify(data, null, 2)); // तपशीलवार लॉगिंग
     delete data.reference; // जुने reference फील्ड काढून टाकणे
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
@@ -330,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .then(response => {
-        console.log("Parsed response:", response);
+        console.log("Parsed response:", JSON.stringify(response, null, 2));
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
