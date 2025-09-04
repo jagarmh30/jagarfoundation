@@ -41,18 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
       data.forEach(row => {
         const village = (row['गाव'] || '').toString().trim();
         const fullName = (row['संयोजकाचे नाव'] || '').toString().trim();
-        const mobile = (row['मोबाईल नंबर'] || '').toString().trim();
 
-        // मोबाईल नंबर 12 अंकी (91 सह) किंवा 10 अंकी स्वीकारा
-        const mobileNum = mobile.replace(/[^0-9]/g, '');
-        if (village && fullName && (mobileNum.length === 12 || mobileNum.length === 10)) {
+        if (village && fullName) {
           if (!convenersByVillage[village]) {
             convenersByVillage[village] = [];
             villages.push(village);
           }
-          convenersByVillage[village].push({ name: fullName, mobile: mobileNum.slice(-10) }); // फक्त शेवटचे 10 अंक
-        } else {
-          console.warn(`अवैध डेटा: गाव=${village}, नाव=${fullName}, मोबाईल=${mobile}, लांबी=${mobileNum.length}`);
+          convenersByVillage[village].push(fullName);
         }
       });
 
@@ -62,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // प्रत्येक गावातील संयोजक सॉर्ट करणे
       for (let village in convenersByVillage) {
-        convenersByVillage[village].sort((a, b) => collator.compare(a.name, b.name));
+        convenersByVillage[village].sort((a, b) => collator.compare(a, b));
       }
 
       console.log('गावांची यादी:', villages);
@@ -116,14 +111,14 @@ document.addEventListener('DOMContentLoaded', function () {
         allConveners = allConveners.concat(convenersByVillage[village]);
       }
       const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
-      allConveners.sort((a, b) => collator.compare(a.name, b.name));
+      allConveners.sort((a, b) => collator.compare(a, b));
     }
 
     // सर्व संयोजक जोडा
-    allConveners.forEach(convener => {
+    allConveners.forEach(name => {
       const opt = document.createElement('option');
-      opt.value = JSON.stringify({ name: convener.name, mobile: convener.mobile });
-      opt.textContent = `${convener.name} (${convener.mobile})`;
+      opt.value = name;
+      opt.textContent = name;
       opt.style.textAlign = 'left';
       referenceSelect.appendChild(opt);
     });
@@ -131,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // शेवटचे नाव "यापैकी कोणीही नाही (अन्य मार्ग)" म्हणून स्वतंत्रपणे जोडा
     const lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)";
     const lastOpt = document.createElement('option');
-    lastOpt.value = JSON.stringify({ name: lastOption, mobile: '' });
+    lastOpt.value = lastOption;
     lastOpt.textContent = lastOption;
     lastOpt.style.textAlign = 'left';
     referenceSelect.appendChild(lastOpt);
@@ -297,44 +292,6 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => { data[key] = value; });
     data.date = dateSelect.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
-    
-    // संयोजकाचे नाव आणि मोबाईल नंबर वेगळे करणे
-    let referenceData = { name: '', mobile: '' };
-    if (!data.reference) {
-      errorMsg.textContent = 'कृपया संयोजक निवडा.';
-      errorMsg.style.display = 'block';
-      return;
-    }
-    try {
-      referenceData = JSON.parse(data.reference);
-      console.log('Parsed Reference Data:', JSON.stringify(referenceData, null, 2)); // तपशीलवार लॉगिंग
-      if (!referenceData.name) {
-        errorMsg.textContent = 'संयोजकाचे नाव रिकामे आहे. कृपया पुन्हा प्रयत्न करा.';
-        errorMsg.style.display = 'block';
-        return;
-      }
-      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && !referenceData.mobile) {
-        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर रिकामा आहे. कृपया वैध संयोजक निवडा.';
-        errorMsg.style.display = 'block';
-        return;
-      }
-      // मोबाईल नंबर 10 अंकी आहे का तपासा
-      const mobileNum = referenceData.mobile.replace(/[^0-9]/g, '');
-      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && mobileNum.length !== 10) {
-        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर अवैध आहे. कृपया वैध 10 अंकी नंबर असलेला संयोजक निवडा.';
-        errorMsg.style.display = 'block';
-        return;
-      }
-    } catch (e) {
-      console.error('Reference डेटा पर्सिंग त्रुटी:', e);
-      errorMsg.textContent = 'संयोजक डेटा पर्सिंगमध्ये त्रुटी. कृपया पुन्हा प्रयत्न करा.';
-      errorMsg.style.display = 'block';
-      return;
-    }
-    data.referenceName = referenceData.name || '';
-    data.referenceMobile = referenceData.mobile || '';
-    console.log('Form Data to send:', JSON.stringify(data, null, 2)); // तपशीलवार लॉगिंग
-    delete data.reference; // जुने reference फील्ड काढून टाकणे
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
     const bodyData = new URLSearchParams(data).toString();
@@ -354,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .then(response => {
-        console.log("Parsed response:", JSON.stringify(response, null, 2));
+        console.log("Parsed response:", response);
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
@@ -450,3 +407,4 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
