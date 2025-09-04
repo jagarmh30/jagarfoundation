@@ -292,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => { data[key] = value; });
     data.date = dateSelect.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
+    console.log("Sending data:", data); // डीबगिंग: पाठवलेला डेटा लॉग करा
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
     const bodyData = new URLSearchParams(data).toString();
@@ -303,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(async res => {
         const text = await res.text();
-        console.log("Raw response:", text);
+        console.log("Raw response:", text); // डीबगिंग: कच्चा रिस्पॉन्स लॉग करा
         try {
           return JSON.parse(text);
         } catch (e) {
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .then(response => {
-        console.log("Parsed response:", response);
+        console.log("Parsed response:", response); // डीबगिंग: पॅर्स केलेला रिस्पॉन्स लॉग करा
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
