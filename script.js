@@ -296,13 +296,20 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // संयोजकाचे नाव आणि मोबाईल नंबर वेगळे करणे
     let referenceData = { name: '', mobile: '' };
-    try {
-      referenceData = JSON.parse(data.reference || '{}');
-    } catch (e) {
-      console.error('Reference डेटा पर्सिंग त्रुटी:', e);
+    if (data.reference) {
+      try {
+        referenceData = JSON.parse(data.reference);
+        console.log('Parsed Reference Data:', referenceData); // डीबगिंगसाठी
+      } catch (e) {
+        console.error('Reference डेटा पर्सिंग त्रुटी:', e);
+        errorMsg.textContent = 'संयोजक डेटा पर्सिंगमध्ये त्रुटी. कृपया पुन्हा प्रयत्न करा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
     }
     data.referenceName = referenceData.name || '';
     data.referenceMobile = referenceData.mobile || '';
+    console.log('Form Data to send:', data); // डीबगिंगसाठी
     delete data.reference; // जुने reference फील्ड काढून टाकणे
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
