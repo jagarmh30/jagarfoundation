@@ -68,4 +68,385 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('गावांची यादी:', villages);
       console.log('गावानुसार संयोजक:', convenersByVillage);
 
-      // गाव ड्रॉपड
+      // गाव ड्रॉपडाउन भरा
+      villageSelect.innerHTML = '';
+      const defaultVillageOption = document.createElement('option');
+      defaultVillageOption.value = '';
+      defaultVillageOption.textContent = '-- गाव निवडा --';
+      defaultVillageOption.style.textAlign = 'center';
+      villageSelect.appendChild(defaultVillageOption);
+
+      villages.forEach(village => {
+        const opt = document.createElement('option');
+        opt.value = village;
+        opt.textContent = village;
+        opt.style.textAlign = 'left';
+        villageSelect.appendChild(opt);
+      });
+
+      // संयोजक ड्रॉपडाउन भरा (सुरुवातीला सर्व)
+      updateConveners(convenersByVillage);
+
+      // गाव बदलल्यावर संयोजक अपडेट
+      villageSelect.addEventListener('change', function () {
+        const selectedVillage = this.value;
+        updateConveners(convenersByVillage, selectedVillage);
+      });
+    })
+    .catch(err => {
+      console.error('शीट डेटा लोड करताना त्रुटी:', err);
+      errorMsg.textContent = 'डेटा लोड करताना त्रुटी आली. कृपया पुन्हा प्रयत्न करा.';
+      errorMsg.style.display = 'block';
+    });
+
+  // संयोजक ड्रॉपडाउन अपडेट फंक्शन
+  function updateConveners(convenersByVillage, selectedVillage = null) {
+    referenceSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- संयोजक निवडा --';
+    defaultOption.style.textAlign = 'center';
+    referenceSelect.appendChild(defaultOption);
+
+    let allConveners = [];
+    if (selectedVillage) {
+      allConveners = convenersByVillage[selectedVillage] || [];
+    } else {
+      for (let village in convenersByVillage) {
+        allConveners = allConveners.concat(convenersByVillage[village]);
+      }
+      const collator = new Intl.Collator('mr', { sensitivity: 'base', numeric: true });
+      allConveners.sort((a, b) => collator.compare(a.name, b.name));
+    }
+
+    // सर्व संयोजक जोडा
+    allConveners.forEach(convener => {
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify({ name: convener.name, mobile: convener.mobile });
+      opt.textContent = `${convener.name} (${convener.mobile})`;
+      opt.style.textAlign = 'left';
+      referenceSelect.appendChild(opt);
+    });
+
+    // शेवटचे नाव "यापैकी कोणीही नाही (अन्य मार्ग)" म्हणून स्वतंत्रपणे जोडा
+    const lastOption = "यापैकी कोणीही नाही (अन्य मार्ग)";
+    const lastOpt = document.createElement('option');
+    lastOpt.value = JSON.stringify({ name: lastOption, mobile: '' });
+    lastOpt.textContent = lastOption;
+    lastOpt.style.textAlign = 'left';
+    referenceSelect.appendChild(lastOpt);
+  }
+
+  // तारीख व वेळेचा स्लॉट निवडणे
+  const SLOTS = [
+    { label: "08:00 AM - 10:00 AM", start: "08:00" },
+    { label: "10:00 AM - 12:00 PM", start: "10:00" },
+    { label: "12:00 PM - 02:00 PM", start: "12:00" },
+    { label: "02:00 PM - 04:00 PM", start: "14:00" },
+    { label: "04:00 PM - 06:00 PM", start: "16:00" },
+    { label: "05:00 PM - 07:00 PM", start: "17:00" }
+  ];
+
+  // तारीख निवडल्यावर टाइमस्लॉट ड्रॉपडाउन अपडेट करणे
+  dateSelect.addEventListener('change', function () {
+    timeslotSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- वेळ निवडा --';
+    defaultOption.style.textAlign = 'center';
+    timeslotSelect.appendChild(defaultOption);
+
+    if (!this.value) {
+      timeslotSelect.disabled = true;
+      return;
+    }
+
+    timeslotSelect.disabled = false;
+    SLOTS.forEach(slot => {
+      const opt = document.createElement('option');
+      opt.value = slot.start;
+      opt.textContent = slot.label;
+      opt.style.textAlign = 'left';
+      timeslotSelect.appendChild(opt);
+    });
+    errorMsg.style.display = 'none';
+  });
+
+  // वेस्ट इनपुट व्हॅलिडेशन
+  wasteInput.addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9.]/g, '');
+    if (this.value.includes('.')) {
+      const parts = this.value.split('.');
+      if (parts.length > 2) this.value = parts[0] + '.' + parts[1];
+      if (parts[1]?.length > 2) this.value = parts[0] + '.' + parts[1].slice(0, 2);
+    }
+  });
+
+  // लोकेशन मिळवणे
+  locBtn.addEventListener('click', () => {
+    if (navigator.geolocation) {
+      locationField.classList.add('location-loading-placeholder');
+      locationField.placeholder = 'लोकेशन घेत आहे...';
+      locationField.value = '';
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          locationField.value = `https://maps.google.com/?q=${lat},${lon}`;
+          locationField.classList.remove('location-loading-placeholder');
+          locationField.placeholder = '← आयकॉनवर टच करा';
+        },
+        err => {
+          alert('लोकेशन मिळवण्यात अडचण आली. कृपया परवानगी द्या.');
+          locationField.classList.remove('location-loading-placeholder');
+          locationField.placeholder = '← आयकॉनवर टच करा';
+        }
+      );
+    } else {
+      alert('तुमचा ब्राउझर लोकेशन सपोर्ट करत नाही.');
+      locationField.classList.remove('location-loading-placeholder');
+      locationField.placeholder = '← आयकॉनवर टच करा';
+    }
+  });
+
+  // डेटा साफ करणे
+  function cleanNumericData(value) {
+    if (!value) return 0;
+    const cleanedValue = value.toString().replace(/[^0-9.]/g, '');
+    const numericValue = parseFloat(cleanedValue);
+    return isNaN(numericValue) ? 0 : numericValue;
+  }
+
+  // डेटा लोड करणे आणि मजकूर डिस्प्ले अपडेट करणे
+  function loadTotalsData() {
+    const DONORS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/Donors?t=' + Date.now();
+    const FUNDS_SHEET_URL = 'https://opensheet.elk.sh/1_f1BgjFMTIexP0GzVhapZGOrL1uxQJ3_6EWsAwqkLYQ/FUNDS?t=' + Date.now();
+
+    // रद्दी डेटा लोड करणे
+    fetch(DONORS_SHEET_URL)
+      .then(res => {
+        if (!res.ok) throw new Error(`रद्दी डेटा लोड करताना त्रुटी: HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        console.log('कच्चा रद्दी डेटा (Donors शीट):', data);
+        const wasteValues = data.map(row => ({
+          waste: cleanNumericData(row['Quantity'] || row['quantity'] || 0),
+          raw: row['Quantity'] || row['quantity'] || 'N/A'
+        }));
+        console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
+        const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0);
+        console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
+
+        // निधी डेटा लोड करणे
+        fetch(FUNDS_SHEET_URL)
+          .then(res => {
+            if (!res.ok) {
+              throw new Error(`निधी डेटा लोड करताना त्रुटी: HTTP ${res.status}. कृपया शीट नाव (FUNDS) आणि ॲक्सेस तपासा.`);
+            }
+            return res.json();
+          })
+          .then(funds => {
+            console.log('कच्चा निधी डेटा (FUNDS शीट):', funds);
+            const fundValues = funds.map(row => ({
+              fund: cleanNumericData(row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 0),
+              raw: row['रक्कम ₹'] || row['Amount'] || row['रक्कम'] || row['amount ₹'] || row['Amount ₹'] || 'N/A'
+            }));
+            console.log('निधी मूल्ये (साफ केलेले):', fundValues);
+            const totalFundsAmount = fundValues.reduce((sum, item) => sum + item.fund, 0);
+            console.log('एकूण निधी:', totalFundsAmount);
+            totalFunds.textContent = `एकूण निधी प्राप्त: ${Math.round(totalFundsAmount)} रु.`;
+            if (totalFundsAmount === 0) {
+              console.warn('निधी डेटा रिक्त किंवा अवैध आहे. शीट ॲक्सेस किंवा डेटा तपासा.');
+            }
+            totalsDisplay.style.display = 'block';
+          })
+          .catch(err => {
+            console.error('निधी डेटा लोड करताना त्रुटी:', err);
+            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
+            totalsDisplay.style.display = 'block';
+          });
+      })
+      .catch(err => {
+        console.error('रद्दी डेटा लोड करताना त्रुटी:', err);
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: 0 किलो`;
+        totalFunds.textContent = `एकूण प्राप्त निधी: 0 रु.`;
+        totalsDisplay.style.display = 'block';
+      });
+  }
+
+  // फॉर्म सबमिट करणे
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    thankyouMessage.style.display = 'none';
+    totalsDisplay.style.display = 'none';
+
+    const wasteVal = wasteInput.value;
+    if (!form.checkValidity() || isNaN(parseFloat(wasteVal)) || parseFloat(wasteVal) < 0) {
+      errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => { data[key] = value; });
+    data.date = dateSelect.value || "";
+    data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
+    
+    // संयोजकाचे नाव आणि मोबाईल नंबर वेगळे करणे
+    let referenceData = { name: '', mobile: '' };
+    if (!data.reference) {
+      errorMsg.textContent = 'कृपया संयोजक निवडा.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    try {
+      referenceData = JSON.parse(data.reference);
+      console.log('Parsed Reference Data:', JSON.stringify(referenceData, null, 2)); // तपशीलवार लॉगिंग
+      if (!referenceData.name) {
+        errorMsg.textContent = 'संयोजकाचे नाव रिकामे आहे. कृपया पुन्हा प्रयत्न करा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && !referenceData.mobile) {
+        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर रिकामा आहे. कृपया वैध संयोजक निवडा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      // मोबाईल नंबर 10 अंकी आहे का तपासा
+      const mobileNum = referenceData.mobile.replace(/[^0-9]/g, '');
+      if (referenceData.name !== "यापैकी कोणीही नाही (अन्य मार्ग)" && mobileNum.length !== 10) {
+        errorMsg.textContent = 'संयोजकाचा मोबाईल नंबर अवैध आहे. कृपया वैध 10 अंकी नंबर असलेला संयोजक निवडा.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+    } catch (e) {
+      console.error('Reference डेटा पर्सिंग त्रुटी:', e);
+      errorMsg.textContent = 'संयोजक डेटा पर्सिंगमध्ये त्रुटी. कृपया पुन्हा प्रयत्न करा.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+    data.referenceName = referenceData.name || '';
+    data.referenceMobile = referenceData.mobile || '';
+    console.log('Form Data to send:', JSON.stringify(data, null, 2)); // तपशीलवार लॉगिंग
+    delete data.reference; // जुने reference फील्ड काढून टाकणे
+
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
+    const bodyData = new URLSearchParams(data).toString();
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: bodyData
+    })
+      .then(async res => {
+        const text = await res.text();
+        console.log("Raw response:", text);
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return { success: false, error: "Invalid JSON: " + text };
+        }
+      })
+      .then(response => {
+        console.log("Parsed response:", JSON.stringify(response, null, 2));
+        if (response.success) {
+          form.style.display = 'none';
+          thankyouMessage.style.display = 'block';
+          if (subtitle) subtitle.style.display = 'none';
+          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => {
+            totalsDisplay.style.display = 'block';
+            thankyouExitBtn.style.display = 'block';
+            loadTotalsData();
+          });
+        } else {
+          throw new Error('सबमिशन अयशस्वी');
+        }
+      })
+      .catch(err => {
+        console.error("Final error:", err);
+        errorMsg.textContent = 'सबमिशन अयशस्वी झाले. कृपया पुन्हा प्रयत्न करा.';
+        errorMsg.style.display = 'block';
+      });
+  });
+
+  thankyouExitBtn && thankyouExitBtn.addEventListener('click', function () {
+    thankyouMessage.style.display = 'none';
+    totalsDisplay.style.display = 'none';
+    form.style.display = 'block';
+    form.reset();
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+    if (subtitle) subtitle.style.display = '';
+    thankyouExitBtn.style.display = 'none';
+  });
+
+  qrPayBtn && qrPayBtn.addEventListener('click', function () {
+    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
+  });
+
+  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
+  function typeWriterEffect(element, text, callback) {
+    element.textContent = '';
+    element.style.textAlign = 'justify';
+    let index = 0;
+    const speed = 50; // मिलिसेकंदमध्ये स्पीड
+    function type() {
+      if (index < text.length) {
+        element.textContent += text.charAt(index);
+        index++;
+        setTimeout(type, speed);
+      } else if (callback) {
+        callback();
+      }
+    }
+    type();
+  }
+
+  // CSS स्टाइल्स
+  const style = document.createElement('style');
+  style.textContent = `
+    .location-loading-placeholder::placeholder {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    #totalsDisplay {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: none;
+    }
+    #totalWaste, #totalFunds {
+      background: #e3fafc;
+      border: 1px solid #19aab8;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #15626a;
+      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+    }
+    #thankyouExitBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border: 1px solid #000;
+      background-color: #fff;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    #thankyouMessage {
+      text-align: justify;
+    }
+  `;
+  document.head.appendChild(style);
+});
