@@ -338,9 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
               whatsappBtn.style.padding = '7px 19px';
               whatsappBtn.style.marginTop = '10px';
               whatsappBtn.style.cursor = 'pointer';
-              whatsappBtn.onclick = () => {
-                window.open(response.whatsappLink, '_blank');
-              };
+              whatsappBtn.onclick = () => window.open(response.whatsappLink, '_blank');
               document.getElementById('thankyouActions').appendChild(whatsappBtn);
             }
           });
@@ -373,4 +371,63 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
 
-  // टाइप
+  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
+  function typeWriterEffect(element, text, callback) {
+    element.textContent = '';
+    element.style.textAlign = 'justify';
+    let index = 0;
+    const speed = 50; // मिलिसेकंदमध्ये स्पीड
+    function type() {
+      if (index < text.length) {
+        element.textContent += text.charAt(index);
+        index++;
+        setTimeout(type, speed);
+      } else if (callback) {
+        callback();
+      }
+    }
+    type();
+  }
+
+  // CSS स्टाइल्स
+  const style = document.createElement('style');
+  style.textContent = `
+    .location-loading-placeholder::placeholder {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    #totalsDisplay {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: none;
+    }
+    #totalWaste, #totalFunds {
+      background: #e3fafc;
+      border: 1px solid #19aab8;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #15626a;
+      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
+    }
+    #thankyouExitBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border: 1px solid #000;
+      background-color: #fff;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    #thankyouMessage {
+      text-align: justify;
+    }
+  `;
+  document.head.appendChild(style);
+});
