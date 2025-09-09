@@ -292,7 +292,6 @@ document.addEventListener('DOMContentLoaded', function () {
     formData.forEach((value, key) => { data[key] = value; });
     data.date = dateSelect.value || "";
     data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
-    console.log("Sending data:", data); // डीबगिंग: पाठवलेला डेटा लॉग करा
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
     const bodyData = new URLSearchParams(data).toString();
@@ -304,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(async res => {
         const text = await res.text();
-        console.log("Raw response:", text); // डीबगिंग: कच्चा रिस्पॉन्स लॉग करा
+        console.log("Raw response:", text);
         try {
           return JSON.parse(text);
         } catch (e) {
@@ -312,35 +311,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
       .then(response => {
-        console.log("Parsed response:", response); // डीबगिंग: पॅर्स केलेला रिस्पॉन्स लॉग करा
+        console.log("Parsed response:", response);
         if (response.success) {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
-          let messageText = thankyouMessage.textContent;
-          if (response.whatsappLink) {
-            messageText += "\n\nकृपया खालील बटणावर क्लिक करून संयोजकाला WhatsApp मेसेज पाठवा.";
-          } else {
-            messageText += "\n\nसंयोजकाचा फोन नंबर उपलब्ध नाही. कृपया जागर फाउंडेशनशी संपर्क साधा.";
-          }
-          typeWriterEffect(thankyouMessage, messageText, () => {
+          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => {
             totalsDisplay.style.display = 'block';
             thankyouExitBtn.style.display = 'block';
             loadTotalsData();
-            if (response.whatsappLink) {
-              // WhatsApp बटण जोडा
-              var whatsappBtn = document.createElement('button');
-              whatsappBtn.textContent = 'संयोजकाला WhatsApp मेसेज पाठवा';
-              whatsappBtn.style.background = '#25D366';
-              whatsappBtn.style.color = '#fff';
-              whatsappBtn.style.border = 'none';
-              whatsappBtn.style.borderRadius = '6px';
-              whatsappBtn.style.padding = '7px 19px';
-              whatsappBtn.style.marginTop = '10px';
-              whatsappBtn.style.cursor = 'pointer';
-              whatsappBtn.onclick = () => window.open(response.whatsappLink, '_blank');
-              document.getElementById('thankyouActions').appendChild(whatsappBtn);
-            }
           });
         } else {
           throw new Error('सबमिशन अयशस्वी');
@@ -362,9 +341,6 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
-    // नवीन: WhatsApp बटण काढा
-    const whatsappBtn = document.querySelector('#thankyouActions button:not(#thankyouExitBtn)');
-    if (whatsappBtn) whatsappBtn.remove();
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
@@ -431,3 +407,4 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
