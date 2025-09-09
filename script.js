@@ -316,11 +316,10 @@ document.addEventListener('DOMContentLoaded', function () {
           form.style.display = 'none';
           thankyouMessage.style.display = 'block';
           if (subtitle) subtitle.style.display = 'none';
-          typeWriterEffect(thankyouMessage, thankyouMessage.textContent, () => {
-            totalsDisplay.style.display = 'block';
-            thankyouExitBtn.style.display = 'block';
-            loadTotalsData();
-          });
+          thankyouMessage.textContent = 'रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!';
+          totalsDisplay.style.display = 'block';
+          thankyouExitBtn.style.display = 'block';
+          loadTotalsData();
         } else {
           throw new Error('सबमिशन अयशस्वी');
         }
@@ -346,24 +345,6 @@ document.addEventListener('DOMContentLoaded', function () {
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
   });
-
-  // टाइपिंग इफेक्ट फंक्शन (लेफ्ट-टू-राईट)
-  function typeWriterEffect(element, text, callback) {
-    element.textContent = '';
-    element.style.textAlign = 'justify';
-    let index = 0;
-    const speed = 50; // मिलिसेकंदमध्ये स्पीड
-    function type() {
-      if (index < text.length) {
-        element.textContent += text.charAt(index);
-        index++;
-        setTimeout(type, speed);
-      } else if (callback) {
-        callback();
-      }
-    }
-    type();
-  }
 
   // CSS स्टाइल्स
   const style = document.createElement('style');
@@ -407,4 +388,3 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
-
