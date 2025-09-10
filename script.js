@@ -11,13 +11,15 @@ document.addEventListener('DOMContentLoaded', function () {
      const dateSelect = document.getElementById('date');
      const thankyouExitBtn = document.getElementById('thankyouExitBtn');
      const qrPayBtn = document.getElementById('qrPayBtn');
-     const quantityInput = document.getElementById('quantity'); // Fixed from 'waste' to 'quantity'
+     const quantityInput = document.getElementById('quantity');
      const subtitle = document.querySelector('.subtitle');
      const totalsDisplay = document.getElementById('totalsDisplay');
      const totalWaste = document.getElementById('totalWaste');
      const totalFunds = document.getElementById('totalFunds');
 
-     // डीबग: form आणि quantityInput उपलब्ध आहे का तपासा
+     // डीबग: एलिमेंट्स उपलब्ध आहेत का तपासा
+     console.log('Form element:', form);
+     console.log('Quantity input:', quantityInput);
      if (!form) {
        console.error('Error: Form with id "main-form" not found in HTML');
        return;
@@ -280,8 +282,10 @@ document.addEventListener('DOMContentLoaded', function () {
          });
      }
 
-     // फॉर्म सबमिट करणे
+     // फॉर्म सबमिट करणे - डीबगिंग जोडले
+     console.log('Setting up form submit listener');
      form.addEventListener('submit', function (e) {
+       console.log('Form submit triggered');
        e.preventDefault();
        successMsg.style.display = 'none';
        errorMsg.style.display = 'none';
@@ -289,21 +293,26 @@ document.addEventListener('DOMContentLoaded', function () {
        totalsDisplay.style.display = 'none';
 
        const quantityVal = quantityInput.value;
+       console.log('Form validity check:', form.checkValidity(), 'Quantity val:', quantityVal);
        if (!form.checkValidity() || isNaN(parseFloat(quantityVal)) || parseFloat(quantityVal) < 0) {
          errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
          errorMsg.style.display = 'block';
+         console.log('Form validation failed');
          return;
        }
        errorMsg.style.display = 'none';
+       console.log('Form validation passed, sending data');
 
        const formData = new FormData(form);
        const data = {};
        formData.forEach((value, key) => { data[key] = value; });
        data.date = dateSelect.value || "";
        data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
+       console.log('Form data:', data);
 
        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
        const bodyData = new URLSearchParams(data).toString();
+       console.log('Sending fetch to:', SCRIPT_URL);
 
        fetch(SCRIPT_URL, {
          method: 'POST',
