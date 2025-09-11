@@ -343,7 +343,12 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
+    const upiId = 'nandkishorchipade@okicici';  // तुमची UPI ID
+    const payeeName = 'SamajikDiwali';  // प्राप्तकर्त्याचे नाव
+    const amount = 1;  // डिफॉल्ट रक्कम ₹1
+    const transactionNote = 'सामाजिक दिवाळी 2025 साठी दान';  // ट्रान्झेक्शन नोट
+    const url = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+    window.location.href = url;
   });
 
   // CSS स्टाइल्स
