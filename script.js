@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
          });
      }
 
-     // फॉर्म सबमिट करणे
+     // फॉर्म सबमिट करणे - CORS फिक्ससह अपडेट
      console.log('Setting up form submit listener');
      form.addEventListener('submit', function (e) {
        console.log('Form submit triggered');
@@ -311,20 +311,20 @@ document.addEventListener('DOMContentLoaded', function () {
        data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
        console.log('Final data to send (check quantity):', data);
 
-       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPYEueLrmV7JhzAlpRUqXLyC9PPuf3qPuOvoFvoHV4VmjICCUXFVWM-ecPirowQYxB9g/exec';  // ✅ नवीन URL
-       const bodyData = new URLSearchParams(data).toString();
+       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPYEueLrmV7JhzAlpRUqXLyC9PPuf3qPuOvoFvoHV4VmjICCUXFVWM-ecPirowQYxB9g/exec';
+       const bodyData = JSON.stringify(data);  // ✅ CORS फिक्स: JSON.stringify
        console.log('Sending fetch to:', SCRIPT_URL);
 
        fetch(SCRIPT_URL, {
          method: 'POST',
-         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+         headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // ✅ CORS फिक्स: text/plain (preflight skip)
          body: bodyData
        })
          .then(async res => {
-           const text = await res.text();
+           const text = await res.text();  // ✅ CORS फिक्स: text() ने मिळवा
            console.log("Raw response:", text);
            try {
-             return JSON.parse(text);
+             return JSON.parse(text);  // JSON parse करा
            } catch (e) {
              return { success: false, error: "Invalid JSON: " + text };
            }
