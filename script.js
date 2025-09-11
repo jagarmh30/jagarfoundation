@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
          });
      }
 
-     // फॉर्म सबमिट करणे - डीबगिंग जोडले
+     // फॉर्म सबमिट करणे
      console.log('Setting up form submit listener');
      form.addEventListener('submit', function (e) {
        console.log('Form submit triggered');
@@ -292,12 +292,12 @@ document.addEventListener('DOMContentLoaded', function () {
        thankyouMessage.style.display = 'none';
        totalsDisplay.style.display = 'none';
 
-       const quantityVal = quantityInput.value;
-       console.log('Form validity check:', form.checkValidity(), 'Quantity val:', quantityVal);
-       if (!form.checkValidity() || isNaN(parseFloat(quantityVal)) || parseFloat(quantityVal) < 0) {
-         errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे.';
+       const quantityVal = quantityInput.value.trim();
+       console.log('Raw Quantity from input:', quantityVal, 'Type:', typeof quantityVal, 'Is NaN?', isNaN(parseFloat(quantityVal)));
+       if (!form.checkValidity() || !quantityVal || isNaN(parseFloat(quantityVal)) || parseFloat(quantityVal) <= 0) {
+         errorMsg.textContent = 'सर्व फिल्ड्स तपासा. रद्दीचे वजन केवळ पॉझिटिव्ह आकड्यांमध्ये असावे (उदा. १००).';
          errorMsg.style.display = 'block';
-         console.log('Form validation failed');
+         console.error('Quantity invalid:', quantityVal);
          return;
        }
        errorMsg.style.display = 'none';
@@ -306,11 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
        const formData = new FormData(form);
        const data = {};
        formData.forEach((value, key) => { data[key] = value; });
+       data.quantity = quantityVal;  // Explicit set
        data.date = dateSelect.value || "";
        data.timeslotLabel = timeslotSelect.options[timeslotSelect.selectedIndex]?.textContent || "";
-       console.log('Form data:', data);
+       console.log('Final data to send (check quantity):', data);
 
-       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzU5fRchikXcIZ00AisRjz-1PPA2yLcfmvVwd7hKZKmxARQm3laCcTSOOvBli6lbouMjQ/exec';
+       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPYEueLrmV7JhzAlpRUqXLyC9PPuf3qPuOvoFvoHV4VmjICCUXFVWM-ecPirowQYxB9g/exec';  // ✅ नवीन URL
        const bodyData = new URLSearchParams(data).toString();
        console.log('Sending fetch to:', SCRIPT_URL);
 
@@ -339,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
              thankyouExitBtn.style.display = 'block';
              loadTotalsData();
            } else {
-             throw new Error('सबमिशन अयशस्वी');
+             throw new Error('सबमिशन अयशस्वी: ' + (response.error || 'Unknown error'));
            }
          })
          .catch(err => {
