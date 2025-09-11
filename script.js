@@ -342,12 +342,19 @@ document.addEventListener('DOMContentLoaded', function () {
     thankyouExitBtn.style.display = 'none';
   });
 
+  // ✅ अपडेट केलेला QR Pay कोड
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    const upiId = '8888757595@ybl';  // तुमची UPI ID
-    const payeeName = 'जागर फाउंडेशन';  // प्राप्तकर्त्याचे नाव
-    const amount = 1;  // डिफॉल्ट रक्कम ₹1
+    const upiId = '8888757595@ybl';  // UPI ID
+    const payeeName = 'जागर फाउंडेशन';  // प्राप्तकर्त्याचे नाव (मराठीत चालेल)
+    const amount = 1.00;  // डिफॉल्ट रक्कम ₹1.00
     const transactionNote = 'सामाजिक दिवाळी 2025 करीता आर्थिक सहभाग';  // ट्रान्झेक्शन नोट
-    const url = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+    // सर्व parameters URL encode करा
+    const url = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${encodeURIComponent(amount.toFixed(2))}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+    console.log("Generated UPI URL:", url);
+
+    // ब्राउझर/UPI अॅप उघडण्याचा प्रयत्न
     window.location.href = url;
   });
 
@@ -376,21 +383,8 @@ document.addEventListener('DOMContentLoaded', function () {
       font-size: 1.2rem;
       font-weight: 500;
       color: #15626a;
-      box-shadow: 0 2px 8px rgba(0,0,60,0.1);
-    }
-    #thankyouExitBtn {
-      display: none;
-      margin-top: 10px;
-      padding: 5px 10px;
-      border: 1px solid #000;
-      background-color: #fff;
-      cursor: pointer;
-      border-radius: 3px;
-    }
-    #thankyouMessage {
-      text-align: justify;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
   `;
   document.head.appendChild(style);
 });
-
