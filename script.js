@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     const upiId = 'nandkishorchipade@okicici';  // तुमची UPI ID
     const payeeName = 'जागर फाउंडेशन';  // प्राप्तकर्त्याचे नाव
-    const amount = 0;  // डिफॉल्ट रक्कम ₹0
+    const amount = 1;  // डिफॉल्ट रक्कम ₹1 (बग फिक्स: ० ऐवजी १)
     const transactionNote = 'सामाजिक दिवाळी 2025 करीता आर्थिक सहभाग';  // ट्रान्झेक्शन नोट
     const url = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
     window.location.href = url;
@@ -393,6 +393,3 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
-
-
-
