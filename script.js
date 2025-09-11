@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    window.location.href = 'upi://pay?pa=YOURUPIID@okicici&pn=SamajikDiwali&cu=INR';
+    window.location.href = 'upi://pay?pa=nandkishorchipade@okicici&pn=SamajikDiwali&cu=INR';
   });
 
   // CSS स्टाइल्स
