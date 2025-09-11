@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    const upiId = 'nandkishorchipade@okicici';  // तुमची UPI ID
+    const upiId = '8888757595@ybl';  // तुमची UPI ID
     const payeeName = 'जागर फाउंडेशन';  // प्राप्तकर्त्याचे नाव
     const amount = 1;  // डिफॉल्ट रक्कम ₹1
     const transactionNote = 'सामाजिक दिवाळी 2025 करीता आर्थिक सहभाग';  // ट्रान्झेक्शन नोट
@@ -393,3 +393,4 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
