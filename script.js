@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   viewInitiativesBtn && viewInitiativesBtn.addEventListener('click', function () {
-    window.location.href = 'https://example.com/initiatives'; // योग्य URL टाका
+    window.location.href = 'https://github.com/jagarmh30/jagarfoundation/tree/main/Slide%20show';
   });
 
   donorsBtn && donorsBtn.addEventListener('click', function () {
