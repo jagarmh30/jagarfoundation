@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   viewInitiativesBtn && viewInitiativesBtn.addEventListener('click', function () {
-    window.location.href = 'https://github.com/jagarmh30/jagarfoundation/tree/main/Slide%20show';
+    window.location.href = 'https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/slideshow.html';
   });
 
   donorsBtn && donorsBtn.addEventListener('click', function () {
