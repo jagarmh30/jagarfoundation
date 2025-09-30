@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जागर फाउंडेशन - स्लाइडशो</title>
+  <style>
+    body {
+      font-family: 'Noto Sans Devanagari', 'Arial', sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .slideshow-container {
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,60,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+    }
+    .slide img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .active {
+      display: block;
+    }
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 10px;
+      border: none;
+      font-size: 18px;
+      user-select: none;
+    }
+    .prev {
+      left: 10px;
+    }
+    .next {
+      right: 10px;
+    }
+    .prev:hover, .next:hover {
+      background: rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow-container">
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2019.avif" alt="2019 Initiative">
+    </div>
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2020.avif" alt="2020 Initiative">
+    </div>
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2021.avif" alt="2021 Initiative">
+    </div>
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2022.avif" alt="2022 Initiative">
+    </div>
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2023.avif" alt="2023 Initiative">
+    </div>
+    <div class="slide">
+      <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/Slide%20show/2024.avif" alt="2024 Initiative">
+    </div>
+    <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+    <button class="next" onclick="changeSlide(1)">&#10095;</button>
+  </div>
+  <script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    function showSlides() {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slideIndex = (slideIndex + 1) % slides.length;
+      slides[slideIndex].classList.add('active');
+      setTimeout(showSlides, 3000); // 3 सेकंदांनी इमेज बदला
+    }
+    function changeSlide(n) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slideIndex = (slideIndex + n + slides.length) % slides.length;
+      slides[slideIndex].classList.add('active');
+    }
+    slides[slideIndex].classList.add('active');
+    setTimeout(showSlides, 3000);
+  </script>
+</body>
+</html>
