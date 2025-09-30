@@ -3,186 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>सामाजिक दिवाळी 2025 - रद्दी संकलन</title>
-  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6YVb6kB3f4B3b3b2b3b2b3b2b3b2b3b2b3b2b3b2b3b2b3b2b3b2b3b2b3b2" crossorigin="anonymous">
+  <title>सामाजिक दिवाळी 2025</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f9f9f9;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
     .subtitle {
-      text-align: center;
-      font-size: 1.1rem;
-      color: #555;
-      margin-bottom: 20px;
-    }
-    .pure-form .pure-control-group {
-      margin-bottom: 15px;
-    }
-    .pure-form label {
-      font-weight: bold;
-      color: #333;
-    }
-    .pure-form input, .pure-form select, .pure-form textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    .pure-form input[type="number"] {
-      -moz-appearance: textfield;
-    }
-    .pure-form input::-webkit-outer-spin-button,
-    .pure-form input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    .pure-form select {
-      height: 40px;
-    }
-    .pure-form button {
-      padding: 10px 20px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .pure-form button:hover {
-      background-color: #218838;
-    }
-    #success, #error {
-      display: none;
-      margin-top: 10px;
+      background-color: #f0f0f0; /* हेडरसाठी बॅकग्राउंड कलर (उदा., हलका राखाडी) */
       padding: 10px;
-      border-radius: 4px;
       text-align: center;
-    }
-    #success {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    #error {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    #thankyouMessage {
-      display: none;
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #e3fafc;
-      border: 1px solid #19aab8;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.2rem;
-      color: #15626a;
     }
     footer {
+      background-color: #333; /* फुटरसाठी बॅकग्राउंड कलर (उदा., गडद राखाडी) */
+      color: white; /* टेक्स्टचा रंग पांढरा ठेवण्यासाठी */
+      padding: 10px;
       text-align: center;
-      margin-top: 20px;
-      color: #777;
-    }
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-      .pure-form button {
-        width: 100%;
-      }
     }
   </style>
 </head>
 <body>
-  <h1>सामाजिक दिवाळी 2025</h1>
-  <p class="subtitle">उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.</p>
+  <h2 class="subtitle">उपक्रमाकरीता आपल्याकडील वर्तमान पत्राची रद्दी दान करावयाची असल्यास खालील माहिती भरा.</h2>
 
-  <div id="success">फॉर्म सबमिट झाला. धन्यवाद!</div>
-  <div id="error">सर्व फिल्ड्स तपासा</div>
+  <div id="success" style="display: none;">फॉर्म सबमिट झाला. धन्यवाद!</div>
 
-  <form id="main-form" class="pure-form pure-form-stacked">
-    <div class="pure-control-group">
-      <label for="name">नाव:</label>
-      <input type="text" id="name" name="name" required placeholder="आपले पूर्ण नाव प्रविष्ट करा">
+  <form id="main-form">
+    <div id="error" style="display: none;">सर्व फिल्ड्स तपासा</div>
+
+    <label for="name">नाव:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="village">रद्दी संकलनासाठी गावाची निवड करा:</label>
+    <select id="village" name="village" required>
+      <option value="">-- गाव निवडा --</option>
+    </select>
+
+    <label for="address">तुमचा सविस्तर पत्ता लिहा:</label>
+    <textarea id="address" name="address" required></textarea>
+
+    <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
+    <div style="display: flex;">
+      <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" readonly>
+      <button type="button" id="locBtn">📍</button>
     </div>
 
-    <div class="pure-control-group">
-      <label for="village">रद्दी संकलनासाठी गावाची निवड करा:</label>
-      <select id="village" name="village" required>
-        <option value="" style="text-align: center;">-- गाव निवडा --</option>
+    <label for="mobile">संपर्कासाठी मोबाईल नंबर:</label>
+    <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" required>
+
+    <label for="waste">उपक्रमासाठी उपलब्ध रद्दी (अंदाज किती किलो):</label>
+    <input type="text" id="waste" name="waste" required>
+
+    <label>रद्दी संकलित करण्यासाठी तारीख व वेळ सुचवा:</label>
+    <div style="display: flex;">
+      <select id="date" name="date" required>
+        <option value="">-- तारीख निवडा --</option>
+        <option value="2025-10-04">4 ऑक्टोबर 2025 (शनिवार)</option>
+        <option value="2025-10-05">5 ऑक्टोबर 2025 (रविवार)</option>
+        <option value="2025-10-11">11 ऑक्टोबर 2025 (शनिवार)</option>
+        <option value="2025-10-12">12 ऑक्टोबर 2025 (रविवार)</option>
+      </select>
+      <select id="timeslot" name="timeslot" disabled required>
+        <option value="">-- वेळ निवडा --</option>
       </select>
     </div>
 
-    <div class="pure-control-group">
-      <label for="address">तुमचा सविस्तर पत्ता लिहा:</label>
-      <textarea id="address" name="address" required placeholder="तुमचा पूर्ण पत्ता प्रविष्ट करा"></textarea>
-    </div>
+    <label for="reference">उपक्रमाची माहिती आपल्यापर्यंत पोहोचवणाऱ्या संयोजकाचे नाव निवडा:</label>
+    <select id="reference" name="reference" required></select>
 
-    <div class="pure-control-group">
-      <label for="location">पत्ता अचूक मिळवण्यासाठी लोकेशन शेअर करा:</label>
-      <div style="position: relative;">
-        <input type="text" id="location" name="location" placeholder="← आयकॉनवर टच करा" readonly>
-        <button type="button" id="locBtn" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); padding: 5px;">
-          <img src="location-icon.png" alt="Location Icon" style="width: 20px; height: 20px;">
-        </button>
-      </div>
-    </div>
-
-    <div class="pure-control-group">
-      <label for="phone">संपर्कासाठी मोबाईल नंबर:</label>
-      <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="दहा अंकी मोबाईल नंबर प्रविष्ट करा">
-    </div>
-
-    <div class="pure-control-group">
-      <label for="waste">उपक्रमासाठी उपलब्ध रद्दी (अंदाज किती किलो):</label>
-      <input type="number" id="waste" name="waste" step="0.01" min="0" required placeholder="रद्दीचे वजन किलोमध्ये प्रविष्ट करा">
-    </div>
-
-    <fieldset class="pure-control-group">
-      <legend>रद्दी संकलित करण्यासाठी तारीख व वेळ सुचवा:</legend>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <select id="date" name="date" required>
-          <option value="" style="text-align: center;">-- तारीख निवडा --</option>
-          <option value="2025-10-04">4 ऑक्टोबर 2025 (शनिवार)</option>
-          <option value="2025-10-05">5 ऑक्टोबर 2025 (रविवार)</option>
-          <option value="2025-10-11">11 ऑक्टोबर 2025 (शनिवार)</option>
-          <option value="2025-10-12">12 ऑक्टोबर 2025 (रविवार)</option>
-        </select>
-        <select id="timeslot" name="timeslot" disabled required>
-          <option value="" style="text-align: center;">-- वेळ निवडा --</option>
-        </select>
-      </div>
-    </fieldset>
-
-    <div class="pure-control-group">
-      <label for="reference">उपक्रमाची माहिती आपल्यापर्यंत पोहोचवणाऱ्या संयोजकाचे नाव निवडा:</label>
-      <select id="reference" name="reference" required>
-        <option value="" style="text-align: center;">-- संयोजक निवडा --</option>
-      </select>
-    </div>
-
-    <div class="pure-controls">
-      <button type="submit" class="pure-button pure-button-primary">सबमिट करा</button>
-    </div>
+    <button type="submit">सबमिट करा</button>
   </form>
 
-  <div id="thankyouMessage">रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!</div>
+  <div id="thankyouMessage" style="display: none;">
+    रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
+  </div>
 
-  <div id="totalsDisplay">
+  <div id="totalsDisplay" style="display: none;">
     <div id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
     <div id="totalFunds">रोख निधी प्राप्त: 0 रु.</div>
   </div>
 
-  <button id="thankyouExitBtn" class="pure-button">बाहेर पडा</button>
+  <button id="thankyouExitBtn" style="display: none;">बाहेर पडा</button>
 
   <footer>© जागर फाउंडेशन | सामाजिक दिवाळी 2025</footer>
 
