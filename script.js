@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const totalsDisplay = document.getElementById('totalsDisplay');
   const totalWaste = document.getElementById('totalWaste');
   const totalFunds = document.getElementById('totalFunds');
+  const viewInitiativesBtn = document.getElementById('viewInitiativesBtn');
+  const donorsBtn = document.getElementById('donorsBtn');
+  const beneficiariesBtn = document.getElementById('beneficiariesBtn');
 
   // इमेजेसवर उजव्या क्लिक आणि ड्रॅग अक्षम करणे
   const images = document.querySelectorAll('img');
@@ -319,6 +322,9 @@ document.addEventListener('DOMContentLoaded', function () {
           thankyouMessage.textContent = 'रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!';
           totalsDisplay.style.display = 'block';
           thankyouExitBtn.style.display = 'block';
+          viewInitiativesBtn.style.display = 'block';
+          donorsBtn.style.display = 'block';
+          beneficiariesBtn.style.display = 'block';
           loadTotalsData();
         } else {
           throw new Error('सबमिशन अयशस्वी');
@@ -340,10 +346,25 @@ document.addEventListener('DOMContentLoaded', function () {
     successMsg.style.display = 'none';
     if (subtitle) subtitle.style.display = '';
     thankyouExitBtn.style.display = 'none';
+    viewInitiativesBtn.style.display = 'none';
+    donorsBtn.style.display = 'none';
+    beneficiariesBtn.style.display = 'none';
   });
 
   qrPayBtn && qrPayBtn.addEventListener('click', function () {
     window.location.href = 'upi://pay?pa=nandkishorchipade@okicici&pn=SamajikDiwali&cu=INR';
+  });
+
+  viewInitiativesBtn && viewInitiativesBtn.addEventListener('click', function () {
+    window.location.href = 'https://example.com/initiatives'; // योग्य URL टाका
+  });
+
+  donorsBtn && donorsBtn.addEventListener('click', function () {
+    window.location.href = 'https://example.com/donors'; // योग्य URL टाका
+  });
+
+  beneficiariesBtn && beneficiariesBtn.addEventListener('click', function () {
+    window.location.href = 'https://example.com/beneficiaries'; // योग्य URL टाका
   });
 
   // CSS स्टाइल्स
@@ -373,9 +394,9 @@ document.addEventListener('DOMContentLoaded', function () {
       color: #15626a;
       box-shadow: 0 2px 8px rgba(0,0,60,0.1);
     }
-    #thankyouExitBtn {
+    #thankyouExitBtn, #viewInitiativesBtn, #donorsBtn, #beneficiariesBtn {
       display: none;
-      margin-top: 10px;
+      margin: 10px 5px;
       padding: 5px 10px;
       border: 1px solid #000;
       background-color: #fff;
