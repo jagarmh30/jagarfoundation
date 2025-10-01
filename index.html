@@ -164,21 +164,14 @@
       margin-top: 14px;
       text-align: center;
     }
-    #thankyouExitBtn, #viewInitiativesBtn, #donorsBtn, #beneficiariesBtn {
-      display: none;
-      margin: 10px 5px;
+    #thankyouExitBtn {
+      display: block;
+      margin: 0 auto;
       padding: 5px 10px;
       border: 1px solid #000;
-      background-color: #19aab8;
-      color: #15626a;
+      background-color: #fff;
       cursor: pointer;
       border-radius: 3px;
-      font-weight: 500;
-      font-size: 1rem;
-    }
-    #thankyouExitBtn:hover, #viewInitiativesBtn:hover, #donorsBtn:hover, #beneficiariesBtn:hover {
-      background: #15626a;
-      color: #fff;
     }
     .qr-section {
       text-align: center;
@@ -408,7 +401,7 @@
           <select id="date" name="date" required>
             <option value="" style="text-align: center;">-- तारीख निवडा --</option>
             <option value="2025-10-04">4 ऑक्टोबर 2025 (शनिवार)</option>
-            <option value="2025-10-05">5 ऑक्टोबर 2025 (रविवार)</option>
+            <option value="2025-10-04">5 ऑक्टोबर 2025 (रविवार)</option>
             <option value="2025-10-11">11 ऑक्टोबर 2025 (शनिवार)</option>
             <option value="2025-10-12">12 ऑक्टोबर 2025 (रविवार)</option>
           </select>
@@ -422,6 +415,12 @@
     <label for="reference">उपक्रमाची माहिती आपल्यापर्यंत पोहोचवणाऱ्या संयोजकाचे नाव निवडा:</label>
     <select id="reference" name="reference" required></select>
 
+    <div class="qr-section">
+      <span class="qr-label">आर्थिक मदत करावयाची असल्यास:</span>
+      <button type="button" id="qrPayBtn">
+        <img src="https://raw.githubusercontent.com/jagarmh30/jagarfoundation/main/rupee%20icon.jpg" alt="R Logo" id="qrImage" draggable="false">
+      </button>
+    </div>
     <div class="actions">
       <button type="submit" id="submitBtn">सबमिट करा</button>
     </div>
@@ -430,13 +429,10 @@
     रद्दी संकलनाकरीता आमचे संयोजक लवकरच आपल्याशी संपर्क साधणार आहेत. धन्यवाद!
   </div>
   <div class="totals-display" id="totalsDisplay">
-    <div class="total-item" id="totalWaste">तुमच्यासह एकूण रद्दी संकलन: 0 किलो</div>
-    <div class="total-item" id="totalFunds">रोख निधी संकलन: 0 रु.</div>
+    <div class="total-item" id="totalWaste">तुमच्यासह एकूण रद्दी संकलित: 0 किलो</div>
+    <div class="total-item" id="totalFunds"> रोख निधी प्राप्त: 0 रु.</div>
   </div>
   <div id="thankyouActions">
-    <button type="button" id="viewInitiativesBtn">राबवलेले उपक्रम बघा</button>
-    <button type="button" id="donorsBtn">देणगीदार</button>
-    <button type="button" id="beneficiariesBtn">लाभार्थींची यादी</button>
     <button type="button" id="thankyouExitBtn">बाहेर पडा</button>
   </div>
   <footer>
@@ -445,3 +441,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+
