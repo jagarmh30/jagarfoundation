@@ -259,14 +259,14 @@ document.addEventListener('DOMContentLoaded', function () {
           })
           .catch(err => {
             console.error('निधी डेटा लोड करताना त्रुटी:', err);
-            totalFunds.textContent = `तुमच्यासह एकूण निधी प्राप्त: 0 रु.`;
+            totalFunds.textContent = `तुमच्यासह एकूण निधी संकलन: 0 रु.`;
             totalsDisplay.style.display = 'block';
           });
       })
       .catch(err => {
         console.error('रद्दी डेटा लोड करताना त्रुटी:', err);
-        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: 0 किलो`;
-        totalFunds.textContent = `एकूण प्राप्त निधी: 0 रु.`;
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलन: 0 किलो`;
+        totalFunds.textContent = `एकूण निधी संकलन: 0 रु.`;
         totalsDisplay.style.display = 'block';
       });
   }
@@ -388,3 +388,4 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
