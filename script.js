@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const timeslotSelect = document.getElementById('timeslot');
   const dateSelect = document.getElementById('date');
   const thankyouExitBtn = document.getElementById('thankyouExitBtn');
-  const qrPayBtn = document.getElementById('qrPayBtn');
   const wasteInput = document.getElementById('waste');
   const subtitle = document.querySelector('.subtitle');
   const totalsDisplay = document.getElementById('totalsDisplay');
@@ -342,11 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
     thankyouExitBtn.style.display = 'none';
   });
 
-  qrPayBtn && qrPayBtn.addEventListener('click', function () {
-    window.location.href = 'upi://pay?pa=nandkishorchipade@okicici&pn=SamajikDiwali&cu=INR';
-  });
-
-  // CSS स्टाइल्स
+    // CSS स्टाइल्स
   const style = document.createElement('style');
   style.textContent = `
     .location-loading-placeholder::placeholder {
@@ -388,5 +383,6 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
 
 
