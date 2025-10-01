@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('रद्दी मूल्ये (साफ केलेले):', wasteValues);
         const totalWasteAmount = wasteValues.reduce((sum, item) => sum + item.waste, 0);
         console.log('एकूण रद्दी (राऊंड फिगर):', Math.round(totalWasteAmount));
-        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलित: ${Math.round(totalWasteAmount)} किलो`;
+        totalWaste.textContent = `तुमच्यासह एकूण रद्दी संकलन: ${Math.round(totalWasteAmount)} किलो`;
 
         // निधी डेटा लोड करणे
         fetch(FUNDS_SHEET_URL)
@@ -388,4 +388,5 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
   document.head.appendChild(style);
 });
+
 
